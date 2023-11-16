@@ -6,6 +6,7 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myuiroom.R
 import com.example.myuiroom.adapters.TaskAdapter
+import com.example.myuiroom.viewModels.TaskViewModel
 
 class DragListener(private val listener: Listener) : View.OnDragListener  {
 
@@ -37,6 +38,13 @@ class DragListener(private val listener: Listener) : View.OnDragListener  {
                             tvUrgent, rvUrgent -> v.rootView.findViewById(rvUrgent)
                             else -> v.parent as RecyclerView
                         }
+                        val type: String = when (viewId) {
+                            tvImportant, rvImportant -> "important"
+                            tvImportantUrgent, rvImportantUrgent -> "importantAndUrgent"
+                            tvNotImportant, rvNotImportant -> "notimportantAndUrgent"
+                            tvUrgent, rvUrgent -> "urgent"
+                            else -> "notimportantAndUrgent"
+                        }
                         var positionTarget: Int = -1 // Default value if cast fails
 
                         try {
@@ -45,12 +53,11 @@ class DragListener(private val listener: Listener) : View.OnDragListener  {
 
                         }
 
-                        Log.d("MyLog", "positionTarget $positionTarget")
-                        Log.d("MyLog", "viewSource.parent $viewSource.parent")
+
                         if (viewSource != null) {
                             val source = viewSource.parent as RecyclerView
                             val adapterSource = source.adapter as TaskAdapter
-                            Log.d("MyLog", "viewSource.parent $viewSource.parent")
+        
                             val positionSource = viewSource.tag as Int
 
                             val list = adapterSource.getList()[positionSource]
@@ -63,7 +70,7 @@ class DragListener(private val listener: Listener) : View.OnDragListener  {
                             val adapterTarget = target.adapter as TaskAdapter
                             Log.d("MyLog", "target $target")
                             val customListTarget = adapterTarget.getList()
-                            Log.d("MyLog", "customListTarget $customListTarget")
+
                             if (positionTarget < 0) {
                                 customListTarget.add(list)
                                 //  customListTarget.add(positionTarget, list)
@@ -72,6 +79,11 @@ class DragListener(private val listener: Listener) : View.OnDragListener  {
                             }
                             adapterTarget?.updateList(customListTarget)
                             adapterTarget?.notifyDataSetChanged()
+
+                            if(target != source){
+                                Log.d("MyLog", "target != source")
+                                listener.editTaskType(list, type)
+                            }
 
 
                         }

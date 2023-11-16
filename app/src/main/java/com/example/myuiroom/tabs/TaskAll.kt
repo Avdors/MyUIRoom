@@ -128,4 +128,8 @@ class TaskAll : Fragment(), View.OnClickListener, Listener {
     override fun setEmptyListImportantUrgent(visibility: Boolean) {
         TODO("Not yet implemented")
     }
+
+    override fun editTaskType(taskModel: TaskModel, type: String) {
+        TODO("Not yet implemented")
+    }
 }

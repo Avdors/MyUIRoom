@@ -65,10 +65,10 @@ class TaskForType : Fragment(), View.OnClickListener, Listener {
             .duration(700)
             .repeat(5)
             .playOn(binding?.buttonAddTask)
-        binding?.tvImportant?.visibility = View.GONE
-        binding?.tvNotImportantAndUrgent?.visibility = View.GONE
-        binding?.tvUrgent?.visibility = View.GONE
-        binding?.tvImportantAndUrgent?.visibility = View.GONE
+        binding?.tvImportant?.visibility = View.VISIBLE
+        binding?.tvNotImportantAndUrgent?.visibility = View.VISIBLE
+        binding?.tvUrgent?.visibility = View.VISIBLE
+        binding?.tvImportantAndUrgent?.visibility = View.VISIBLE
 
         return binding?.root
     }
@@ -235,6 +235,11 @@ class TaskForType : Fragment(), View.OnClickListener, Listener {
         binding?.tvImportantAndUrgent?.visibility = if (visibility) View.VISIBLE else View.GONE
             Log.d("MyLog", "setEmptyListImportantUrgent")
 
+    }
+
+    override fun editTaskType(taskModel: TaskModel, type: String) {
+        taskViewModel?.startUpdateTask(taskModel.id, taskModel.name, taskModel.email,
+            type, taskModel.info, taskModel.dateStart, taskModel.dateEnd, taskModel.completed)
     }
 
 }

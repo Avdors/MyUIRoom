@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="type">
+        <item>important</item>
+        <item>urgent</item>
+        <item>importantAndUrgent</item>
+        <item>notimportantAndUrgent</item>
+    </string-array>
+</resources>

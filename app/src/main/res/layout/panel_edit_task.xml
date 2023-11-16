@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".tabs.PanelEditTask">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/green"
+        android:padding="10dp">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/headerEditTask"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="60dp"
+            android:textColor="@color/black"
+            android:text="@string/task_edit"/>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/sectionEditNameTask"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="@string/label_enter_name_task"
+            app:boxBackgroundColor="@android:color/transparent"
+            app:boxCornerRadiusBottomEnd="20dp"
+            app:boxCornerRadiusBottomStart="20dp"
+            app:boxCornerRadiusTopEnd="20dp"
+            app:boxCornerRadiusTopStart="20dp"
+            app:boxStrokeColor="@android:color/white"
+            app:boxStrokeWidthFocused="4dp"
+            app:endIconMode="clear_text"
+            app:endIconTint="@android:color/holo_red_light"
+            app:hintTextColor="@android:color/white"
+            app:layout_constraintTop_toBottomOf="@id/headerEditTask"
+            app:startIconDrawable="@drawable/edit_white_smal"
+            app:startIconTint="@android:color/white"
+            tools:layout_editor_absoluteX="20dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editNameTask"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:textColor="@android:color/black"
+                android:textCursorDrawable="@drawable/cursor" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/sectionEditInfoTask"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/sectionEditNameTask"
+            android:layout_margin="10dp"
+            app:boxBackgroundColor="@android:color/transparent"
+            app:boxStrokeColor="@android:color/white"
+            app:startIconTint="@android:color/white"
+            app:endIconTint="@android:color/holo_red_light"
+            android:hint="@string/label_enter_info_task"
+            app:hintTextColor="@android:color/white"
+            app:startIconDrawable="@drawable/edit_white_smal"
+            app:endIconMode="clear_text"
+            app:boxStrokeWidthFocused="4dp"
+            app:boxCornerRadiusBottomEnd="20dp"
+            app:boxCornerRadiusBottomStart="20dp"
+            app:boxCornerRadiusTopEnd="20dp"
+            app:boxCornerRadiusTopStart="20dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editInfoTask"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:textColor="@android:color/black"
+                android:textCursorDrawable="@drawable/cursor"/>
+            <TextView
+                android:id="@+id/taskTypeLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/label_choose_task_type"
+                android:textColor="@android:color/black"
+                android:layout_marginTop="10dp"
+                app:layout_constraintTop_toBottomOf="@+id/editInfoTask"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+            <Spinner
+                android:id="@+id/taskTypeSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/taskTypeLabel"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="10dp"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/DateStartTask"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/sectionEditInfoTask"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/DateEndTask"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/black"
+            android:text="@string/enter_date_start">
+
+        </androidx.appcompat.widget.AppCompatTextView>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/DateEndTask"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/sectionEditInfoTask"
+            app:layout_constraintStart_toEndOf="@+id/DateStartTask"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/black"
+            android:text="@string/enter_end_start">
+
+
+        </androidx.appcompat.widget.AppCompatTextView>
+
+        <CheckBox
+            android:id="@+id/checkBoxCompleted"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/completed"
+            tools:layout_editor_absoluteX="10dp"
+            tools:layout_editor_absoluteY="10dp"
+            app:layout_constraintTop_toBottomOf="@+id/DateStartTask"
+            app:layout_constraintEnd_toStartOf="@+id/finishEdit"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="10dp"/>
+
+        <Button
+            android:id="@+id/finishEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/finish_editing"
+            app:layout_constraintTop_toBottomOf="@+id/DateStartTask"
+            app:layout_constraintStart_toEndOf="@+id/checkBoxCompleted"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="10dp"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/headerRemind"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@+id/checkBoxCompleted"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="60dp"
+            android:textColor="@color/black"
+            android:text="@string/greate_a_reminder"/>
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/headerRemind"
+            tools:layout_editor_absoluteX="10dp">
+
+            <DatePicker
+                android:id="@+id/datePicker"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="-30dp"
+                android:layout_marginRight="-30dp"
+                android:layout_weight="1"
+                android:calendarViewShown="false"
+                android:datePickerMode="spinner"
+                android:scaleX="0.7"
+                android:scaleY="0.7" />
+
+            <TimePicker
+                android:id="@+id/timePicker"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="-30dp"
+                android:layout_marginRight="-30dp"
+                android:layout_weight="1"
+                android:calendarViewShown="false"
+                android:scaleX="0.7"
+                android:scaleY="0.7"
+                android:timePickerMode="spinner" />
+
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/greateNotif"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/greate_a_notification"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

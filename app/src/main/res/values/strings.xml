@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">MyUIRoom</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="home">HOME</string>
+    <string name="settings">SETTINGS</string>
+    <string name="new_task">NEW TASK</string>
+    <string name="add_task">ADD TASK</string>
+    <string name="add_task_plus">+</string>
+    <string name="task">TASK</string>
+    <string name="work_tasks">WORK TASKS</string>
+    <string name="home_tasks">HOME TASKS</string>
+    <string name="save">SAVE</string>
+    <string name="login">LOGIN</string>
+    <string name="close">CLOSE TASK</string>
+    <string name="notinternet">ERROR! TURN ON THE INTERNET!</string>
+    <string name="download">DOWNLOAD</string>
+    <string name="logon">LOG ON</string>
+    <string name="important">IMPORTANT</string>
+    <string name="urgent">URGENT</string>
+    <string name="alllist">ALL LIST</string>
+    <string name="imp_and_urgent">IMPORTANT AND URGENT</string>
+    <string name="app_for_task">AN APP TO KEEP TRACK OF YOUR CASES AND TASKS</string>
+    <string name="not_imp_and_urgen">NOT IMPORTANT AND NOT URGENT</string>
+    <string name="task_edit">EDIT TASK</string>
+    <string name="label_enter_name_task">ENTER A TASK NAME</string>
+    <string name="label_enter_info_task">ENTER A TASK DESCRIPTION</string>
+    <string name="enter_date_start">START DATE</string>
+    <string name="enter_end_start">END DATE</string>
+    <string name="completed">COMPLETED</string>
+    <string name="finish_editing">FINISH EDITING</string>
+    <string name="label_choose_task_type">CHOOSE TASK TYPE:</string>
+    <string name="error">ERROR</string>
+    <string name="greate_a_reminder">GREATE A REMINDER</string>
+    <string name="greate_a_notification">GREATE A NOTIFICATION</string>
+    <string name="close_task">IT IS TIME TO CLOSE THE TASK</string>
+    <string name="notication_dun">NOTIFICATION DUN</string>
+</resources>

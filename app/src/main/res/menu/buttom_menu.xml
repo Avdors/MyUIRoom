@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/loginBottomNav"
+        android:icon="@drawable/logining"
+        android:title="@string/login"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/taskItemBottomNav"
+        android:icon="@drawable/task"
+        android:title="@string/task"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/allList"
+        android:icon="@drawable/list_all"
+        android:title="@string/alllist"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/settingItemBottomNav"
+        android:icon="@drawable/settings"
+        android:title="@string/settings"
+        app:showAsAction="ifRoom" />
+
+</menu>

@@ -1,0 +1,76 @@
+
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".tabs.TaskForType">
+
+    <GridLayout
+        android:id="@+id/gridLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:rowCount="2"
+        android:columnCount="2"
+        android:useDefaultMargins="false">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/important"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_gravity="fill"
+            android:background="@drawable/frame_blue" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/important_and_urgent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_gravity="fill"
+            android:background="@drawable/frame_red" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/not_important_and_urgent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_gravity="fill"
+            android:background="@drawable/frame_green" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/urgent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_gravity="fill"
+            android:background="@drawable/frame_gold" />
+
+
+
+    </GridLayout>
+
+    <View
+        android:id="@+id/buttonAddTask"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@drawable/add_circle"
+        app:layout_constraintBottom_toBottomOf="@id/gridLayout"
+        app:layout_constraintEnd_toEndOf="@id/gridLayout"
+        app:layout_constraintHeight_default="percent"
+        app:layout_constraintHeight_percent="0.1"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@id/gridLayout"
+        app:layout_constraintTop_toTopOf="@id/gridLayout"
+        app:layout_constraintVertical_bias="0.5"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent="0.1"
+        android:text = "@string/add_task_plus"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

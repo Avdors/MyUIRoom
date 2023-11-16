@@ -34,7 +34,6 @@
 
             </androidx.recyclerview.widget.RecyclerView>
             <TextView
-                android:id="@+id/tv_important"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="top|center_horizontal"
@@ -55,7 +54,6 @@
                 android:background="@drawable/frame_red"
                 android:paddingTop="30dp"/>
             <TextView
-                android:id="@+id/tv_important_and_urgent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Important and Urgent"
@@ -68,6 +66,11 @@
             android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Not Important and Urgent"
+                android:layout_gravity="top|center_horizontal"/>
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/not_important_and_urgent"
                 android:layout_width="match_parent"
@@ -75,7 +78,6 @@
                 android:background="@drawable/frame_green"
                 android:paddingTop="30dp"/>
             <TextView
-                android:id="@+id/tv_not_important_and_urgent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Not Important and Urgent"
@@ -88,6 +90,11 @@
             android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Urgent"
+                android:layout_gravity="top|center_horizontal"/>
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/urgent"
                 android:layout_width="match_parent"
@@ -95,7 +102,6 @@
                 android:background="@drawable/frame_gold"
                 android:paddingTop="30dp"/>
             <TextView
-                android:id="@+id/tv_urgent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Urgent"

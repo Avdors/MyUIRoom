@@ -17,18 +17,20 @@ import com.example.myuiroom.data.Database
 import com.example.myuiroom.databinding.TaskAllBinding
 import com.example.myuiroom.models.TaskModel
 import com.example.myuiroom.repositories.TaskRepository
+import com.example.myuiroom.tabs.move.Listener
 import com.example.myuiroom.viewModels.TaskFactory
 import com.example.myuiroom.viewModels.TaskViewModel
 import java.time.LocalDate
 
 
-class TaskAll : Fragment(), View.OnClickListener {
+class TaskAll : Fragment(), View.OnClickListener, Listener {
 
     private var binding: TaskAllBinding? = null
     private var taskRepository: TaskRepository? = null
     private var taskViewModel: TaskViewModel? = null
     private var taskFactory: TaskFactory? = null
     private var taskAdapter: TaskAdapter? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,7 +59,7 @@ class TaskAll : Fragment(), View.OnClickListener {
 
     private fun initRecyclerProducts() {
         binding?.recyclerTask?.layoutManager = LinearLayoutManager(context)
-        taskAdapter = TaskAdapter({taskModel: TaskModel ->  completeTask(taskModel)  },
+        taskAdapter = TaskAdapter(this, {taskModel: TaskModel ->  completeTask(taskModel)  },
             {taskModel: TaskModel -> editTask(taskModel)  })
         binding?.recyclerTask?.adapter = taskAdapter
     }
@@ -109,5 +111,21 @@ class TaskAll : Fragment(), View.OnClickListener {
             }
 
         }
+    }
+
+    override fun setEmptyListImportant(visibility: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    override fun setEmptyListNotImportant(visibility: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    override fun setEmptyListUrgent(visibility: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    override fun setEmptyListImportantUrgent(visibility: Boolean) {
+        TODO("Not yet implemented")
     }
 }

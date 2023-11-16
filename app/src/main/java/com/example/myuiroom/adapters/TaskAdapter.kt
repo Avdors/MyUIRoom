@@ -1,16 +1,22 @@
 package com.example.myuiroom.adapters
 
+import android.content.ClipData
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myuiroom.databinding.TaskItemBinding
 import com.example.myuiroom.models.TaskModel
+import com.example.myuiroom.tabs.move.DragListener
+import com.example.myuiroom.tabs.move.Listener
 import java.text.FieldPosition
 
-class TaskAdapter (private val completeTask:(TaskModel)->Unit,
-                   private val editTask:(TaskModel)->Unit) : RecyclerView.Adapter<TaskAdapter.TaskHolder>() {
+class TaskAdapter (private val listener: Listener, private val completeTask:(TaskModel)->Unit,
+                   private val editTask:(TaskModel)->Unit) : RecyclerView.Adapter<TaskAdapter.TaskHolder>(), View.OnTouchListener {
 
-    private val taskList = ArrayList<TaskModel>()
+    private var taskList = ArrayList<TaskModel>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskHolder {
 
@@ -33,47 +39,15 @@ class TaskAdapter (private val completeTask:(TaskModel)->Unit,
 
     override fun onBindViewHolder(holder: TaskHolder, position: Int) {
         holder.bind(taskList[position], completeTask, editTask)
+        holder.elementField.tag = position
+        holder.elementField.setOnTouchListener(this)
+        holder.elementField.setOnDragListener(DragListener(listener))
     }
 
     fun setList(task: List<TaskModel>) {
         taskList.clear()
         taskList.addAll(task)
     }
-
-    // AVD здесь добавляю блок для реализации изменения позиции элемента списка
-    // путем перетаскивания
-
-    fun moveItem(fromPosition: Int, toPosition: Int){
-        if (fromPosition < toPosition) {
-            for (i in fromPosition until toPosition) {
-                taskList.swap(i, i + 1)
-            }
-        } else {
-            for (i in fromPosition downTo toPosition + 1) {
-                taskList.swap(i, i - 1)
-            }
-        }
-        notifyItemMoved(fromPosition, toPosition)
-    }
-
-    // Расширение добавляющее функцию свап, для смены индекса элемента
-    private fun <T> MutableList<T>.swap(index1: Int, index2: Int) {
-        val tmp = this[index1] // 'this' corresponds to the list
-        this[index1] = this[index2]
-        this[index2] = tmp
-    }
-    // метод для вставки новой задачи в список
-    fun insertTask(position: Int, taskModel: TaskModel) {
-        taskList.add(position, taskModel)
-        notifyItemInserted(position)
-    }
-    // меняем тип задачи при перетаскивании из разных блоков
-    fun changeTaskType(position: Int, newType: String) {
-        val task = taskList[position]
-        task.type = newType // Assuming TaskModel has a type property
-        notifyItemChanged(position)
-    }
-    // заканчивается блок для блок для реализации изменения позиции элемента списка
 
     class TaskHolder(val binding: TaskItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
@@ -86,6 +60,32 @@ class TaskAdapter (private val completeTask:(TaskModel)->Unit,
                 completeTask(taskModel) })
             binding.editTask.setOnClickListener({
                 editTask(taskModel) })
+        }
+        val elementField = binding.cardTask
+    }
+
+    override fun onTouch(v: View, event: MotionEvent): Boolean {
+        if (event.action == MotionEvent.ACTION_DOWN) {
+            val data = ClipData.newPlainText("", "")
+            val shadowBuilder = View.DragShadowBuilder(v)
+            v.startDragAndDrop(data, shadowBuilder, v, 0)
+            return true
+        }
+        return false
+    }
+
+    fun getList(): ArrayList<TaskModel> = taskList
+
+    fun updateList(list: ArrayList<TaskModel>) {
+        this.taskList = list
+    }
+
+    fun getDragInstance(): DragListener? {
+        if (listener != null){
+            return DragListener(listener)
+        } else {
+            Log.e("ListAdapter", "Listener wasn't initialized!")
+            return  null
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.example.myuiroom.tabs
 
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
+import com.example.myuiroom.Notification
 import com.example.myuiroom.R
 import com.example.myuiroom.adapters.TaskAdapter
 import com.example.myuiroom.data.Database
@@ -40,6 +42,10 @@ class TaskForType : Fragment(), View.OnClickListener, Listener {
     private var taskAdapterimpurg: TaskAdapter? = null
     private var taskAdapternotimpurg: TaskAdapter? = null
     private var email: String? = "test"
+    private var createNotif = false
+    private var time = ""
+    private var title = ""
+    private var message = ""
     private var panelLoad : LoadingData? = null
     private val currentDate = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         LocalDate.now()
@@ -70,8 +76,58 @@ class TaskForType : Fragment(), View.OnClickListener, Listener {
         binding?.tvUrgent?.visibility = View.VISIBLE
         binding?.tvImportantAndUrgent?.visibility = View.VISIBLE
 
+        val notif = arguments?.getString("createNotif")
+
+        if(notif == "true"){
+            createNotif = true
+            time = arguments?.getString("time").toString()
+            title = arguments?.getString("title").toString()
+            message = arguments?.getString("message").toString()
+           // scheduleNotification()
+        }
+
+
         return binding?.root
     }
+
+//     @RequiresApi(Build.VERSION_CODES.M)
+//    private fun scheduleNotification() {
+//
+//        Log.d("MyLog", "scheduleNotification: ")
+//        val intent = Intent(context, Notification::class.java)
+//       intent.setAction("com.example.myuiroom.MY_ACTION")
+//       val title = binding?.editNameTask?.text.toString()
+//        val message = getString(R.string.close_task)
+//        intent.putExtra(titleExtra, title)
+//        intent.putExtra(messageExtra, message)
+//       // intent.putExtra("activity", MainActivity::class.java)
+//
+//        val pendingIntent = PendingIntent.getBroadcast(
+//            context,
+//            notificationID,
+//            intent,
+//            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+//        )
+//        val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+//        val time = getTime()
+//        val result_SCHEDULE = context?.checkCallingOrSelfPermission("android.permission.SCHEDULE_EXACT_ALARM")
+//        Log.d("MyLog", "test SCHEDULE_EXACT_ALARM, premission $result_SCHEDULE ")
+//        val result_POST = context?.checkCallingOrSelfPermission("android.permission.POST_NOTIFICATIONS")
+//        Log.d("MyLog", "test result_POST, premission $result_POST ")
+//        //alarmManager.set(AlarmManager.RTC_WAKEUP, time, pendingIntent)
+//      // alarmManager.setExactAndAllowWhileIdle(
+//      // val triggerTime = System.currentTimeMillis() + 10 * 1000
+//            alarmManager.setExactAndAllowWhileIdle(
+//                AlarmManager.RTC_WAKEUP,
+//                time,
+//                pendingIntent
+//            )
+//
+//
+//           showAlert(time, title, message)
+//
+//
+//    }
 
     private fun loadTask() {
         taskViewModel?.tasks?.observe(viewLifecycleOwner, Observer {

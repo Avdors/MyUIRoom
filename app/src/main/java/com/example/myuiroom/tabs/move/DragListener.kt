@@ -52,8 +52,6 @@ class DragListener(private val listener: Listener) : View.OnDragListener  {
                         } catch (e: Exception) {
 
                         }
-
-
                         if (viewSource != null) {
                             val source = viewSource.parent as RecyclerView
                             val adapterSource = source.adapter as TaskAdapter
@@ -84,12 +82,7 @@ class DragListener(private val listener: Listener) : View.OnDragListener  {
                                 Log.d("MyLog", "target != source")
                                 listener.editTaskType(list, type)
                             }
-
-
                         }
-
-
-
                     }
                 }
             }

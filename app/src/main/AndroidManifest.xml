@@ -17,8 +17,13 @@
         android:theme="@style/Theme.MyUIRoom"
         tools:targetApi="31"
         android:usesCleartextTraffic="true">
-        <receiver
-            android:name=".notices.Notification"/>
+        <receiver android:name=".Notification"
+            android:enabled="true"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.example.myuiroom.MY_ACTION"/>
+        </intent-filter>
+        </receiver>
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait"

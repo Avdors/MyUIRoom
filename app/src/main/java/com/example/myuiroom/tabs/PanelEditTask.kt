@@ -1,6 +1,7 @@
 package com.example.myuiroom.tabs
 
 import android.app.*
+
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
@@ -23,14 +24,12 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
-import com.example.myuiroom.MainActivity
-import com.example.myuiroom.R
+import com.example.myuiroom.*
+import com.example.myuiroom.Notification
+
 import com.example.myuiroom.data.Database
 import com.example.myuiroom.databinding.PanelEditTaskBinding
-import com.example.myuiroom.notices.channelID
-import com.example.myuiroom.notices.messageExtra
-import com.example.myuiroom.notices.notificationID
-import com.example.myuiroom.notices.titleExtra
+import com.example.myuiroom.notices.*
 import com.example.myuiroom.repositories.TaskRepository
 import com.example.myuiroom.viewModels.TaskFactory
 import com.example.myuiroom.viewModels.TaskViewModel
@@ -42,8 +41,9 @@ import java.time.temporal.ChronoField
 import java.util.*
 
 
-@RequiresApi(Build.VERSION_CODES.O)
-    class PanelEditTask : BottomSheetDialogFragment(),  View.OnClickListener{
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    class PanelEditTask : BottomSheetDialogFragment(), View.OnClickListener{
     private var binding: PanelEditTaskBinding? = null
     private var nameFormParent: String? = ""
     private var taskAction: String? = ""
@@ -58,9 +58,6 @@ import java.util.*
     private var taskFactory: TaskFactory? = null
 
     private var firstStart: Boolean = true
-    //private var notificationManager: NotificationManager? = null
-    private val channe_lID = "com.example.avnotification.MyUIRoom"
-    private val notification_ID = 9
     private var currentDate = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         LocalDate.now()
     } else {
@@ -130,7 +127,6 @@ import java.util.*
           }
 
           else {
-
               binding?.DateEndTask?.setText(getString(R.string.enter_end_start))}
         }
 
@@ -141,31 +137,10 @@ import java.util.*
         binding?.DateStartTask?.setOnClickListener{
             showDatePickerDialog("Start")
         }
-
-        binding?.greateNotif?.setOnClickListener{scheduleNotification()}
-
-
+      //  createNotification()
+        binding?.greateNotif?.setOnClickListener(this)
         return binding?.root
     }
-
-    private fun createNotification() {
-        val name = "Notif Channel"
-        val desc = "A description of the Channel"
-        val importance = NotificationManager.IMPORTANCE_HIGH
-        val channel = NotificationChannel(channelID, name, importance)
-        channel.description = desc
-
-        // Set notification sound
-
-        channel.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION), null)
-        channel.enableVibration(true)
-        channel.enableLights(true)
-        val notificationManager = requireContext().getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager?.createNotificationChannel(channel)
-
-
-    }
-
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun showDatePickerDialog(type:String) {
@@ -198,11 +173,6 @@ import java.util.*
 
             datePickerDialog.show()
         }
-//                { _, selectedYear, selectedMonth, selectedDay ->
-//                    val selectedDate = "$selectedYear-${selectedMonth + 1}-$selectedDay"
-//                    dateTextView.setText(selectedDate)
-//                },
-
     }
 
     fun spinerProcessing(){
@@ -233,115 +203,122 @@ import java.util.*
             }
 
         }
-
     }
-
     override fun onClick(view: View) {
+    when (view.id) {
+    R.id.finishEdit -> {
+       if (binding?.checkBoxCompleted?.isChecked == true) {
+           complet = "true"
+       } else {
+           complet = ""
+       }
+       if (binding?.editNameTask?.text?.toString()!!.isNotEmpty() and
+           email.toString().isNotEmpty() and typeTask.toString().isNotEmpty() and
+           binding?.editInfoTask?.text?.toString()!!.isNotEmpty() and
+           binding?.DateStartTask?.text?.toString()!!.isNotEmpty() and
+           binding?.DateEndTask?.text?.toString()!!.isNotEmpty()
+       ) {
 
-        if(binding?.checkBoxCompleted?.isChecked == true){
-            complet = "true"
-        }
-        else{
-            complet = ""
-        }
-    if(binding?.editNameTask?.text?.toString()!!.isNotEmpty() and
-        email.toString().isNotEmpty() and typeTask.toString().isNotEmpty() and
-        binding?.editInfoTask?.text?.toString()!!.isNotEmpty() and
-        binding?.DateStartTask?.text?.toString()!!.isNotEmpty() and
-        binding?.DateEndTask?.text?.toString()!!.isNotEmpty()) {
+           if (nameFormParent == "TaskAll" && taskAction != "Edit") {
+
+               taskViewModel?.startInsert(
+                   binding?.editNameTask?.text?.toString()!!,
+                   email.toString(),
+                   typeTask.toString(),
+                   binding?.editInfoTask?.text?.toString()!!,
+                   binding?.DateStartTask?.text?.toString()!!,
+                   binding?.DateEndTask?.text?.toString()!!,
+                   complet.toString()
+               )
+               dismiss()
+               (context as FragmentActivity).supportFragmentManager.beginTransaction()
+                   .replace(R.id.content, TaskAll()).commit()
+           } else if (nameFormParent == "TaskAll" && taskAction == "Edit") {
+               if (idTask != null) {
+                   taskViewModel?.startUpdateTask(
+                       idTask?.toInt()!!,
+                       binding?.editNameTask?.text?.toString()!!,
+                       email.toString(),
+                       typeTask.toString(),
+                       binding?.editInfoTask?.text?.toString()!!,
+                       binding?.DateStartTask?.text?.toString()!!,
+                       binding?.DateEndTask?.text?.toString()!!,
+                       complet.toString()
+                   )
+               }
+               dismiss()
+               (context as FragmentActivity).supportFragmentManager.beginTransaction()
+                   .replace(R.id.content, TaskAll()).commit()
+           } else if (nameFormParent == "TaskForType" && taskAction == "Edit") {
+               if (idTask != null) {
+                   taskViewModel?.startUpdateTask(
+                       idTask?.toInt()!!,
+                       binding?.editNameTask?.text?.toString()!!,
+                       email.toString(),
+                       typeTask.toString(),
+                       binding?.editInfoTask?.text?.toString()!!,
+                       binding?.DateStartTask?.text?.toString()!!,
+                       binding?.DateEndTask?.text?.toString()!!,
+                       complet.toString()
+                   )
+               }
+               dismiss()
+               (context as FragmentActivity).supportFragmentManager.beginTransaction()
+                   .replace(R.id.content, TaskForType()).commit()
+           } else if (nameFormParent == "TaskForType" && taskAction != "Edit") {
+
+               taskViewModel?.startInsert(
+                   binding?.editNameTask?.text?.toString()!!,
+                   email.toString(),
+                   typeTask.toString(),
+                   binding?.editInfoTask?.text?.toString()!!,
+                   binding?.DateStartTask?.text?.toString()!!,
+                   binding?.DateEndTask?.text?.toString()!!,
+                   complet.toString()
+               )
+               dismiss()
+
+               (context as FragmentActivity).supportFragmentManager.beginTransaction()
+                   .replace(R.id.content, TaskForType()).commit()
+           }
 
 
-    if (nameFormParent == "TaskAll" && taskAction != "Edit") {
-
-    taskViewModel?.startInsert(binding?.editNameTask?.text?.toString()!!,
-        email.toString(), typeTask.toString(),binding?.editInfoTask?.text?.toString()!!,binding?.DateStartTask?.text?.toString()!!,
-        binding?.DateEndTask?.text?.toString()!!, complet.toString())
-        dismiss()
-        (context as FragmentActivity).supportFragmentManager.beginTransaction().replace(R.id.content, TaskAll()).commit()
-    }
-        else if(nameFormParent == "TaskAll" && taskAction == "Edit"){
-            if(idTask != null) {
-                taskViewModel?.startUpdateTask(
-                    idTask?.toInt()!!,
-                    binding?.editNameTask?.text?.toString()!!,
-                    email.toString(),
-                    typeTask.toString(),
-                    binding?.editInfoTask?.text?.toString()!!,
-                    binding?.DateStartTask?.text?.toString()!!,
-                    binding?.DateEndTask?.text?.toString()!!,
-                    complet.toString()
-                )
-            }
-        dismiss()
-        (context as FragmentActivity).supportFragmentManager.beginTransaction().replace(R.id.content, TaskAll()).commit()
-        }
-    else if(nameFormParent == "TaskForType" && taskAction == "Edit"){
-        if(idTask != null) {
-            taskViewModel?.startUpdateTask(
-                idTask?.toInt()!!,
-                binding?.editNameTask?.text?.toString()!!,
-                email.toString(),
-                typeTask.toString(),
-                binding?.editInfoTask?.text?.toString()!!,
-                binding?.DateStartTask?.text?.toString()!!,
-                binding?.DateEndTask?.text?.toString()!!,
-                complet.toString()
-            )
-        }
-        dismiss()
-        (context as FragmentActivity).supportFragmentManager.beginTransaction().replace(R.id.content, TaskForType()).commit()
-    }
-       else if (nameFormParent == "TaskForType" && taskAction != "Edit") {
-
-            taskViewModel?.startInsert(binding?.editNameTask?.text?.toString()!!,
-                email.toString(), typeTask.toString(),binding?.editInfoTask?.text?.toString()!!,binding?.DateStartTask?.text?.toString()!!,
-                binding?.DateEndTask?.text?.toString()!!, complet.toString())
-            dismiss()
-            (context as FragmentActivity).supportFragmentManager.beginTransaction().replace(R.id.content, TaskForType()).commit()
-        }
-
-   //     scheduleNotification()
-}
-        else
-        Toast.makeText(context, getString(R.string.error), Toast.LENGTH_SHORT).show()
-
-    }
-
-    @RequiresApi(Build.VERSION_CODES.M)
-    private fun scheduleNotification() {
-
-        Log.d("MyLog", "scheduleNotification: ")
-        val intent = Intent(requireContext(), Notification::class.java)
+       } else
+           Toast.makeText(context, getString(R.string.error), Toast.LENGTH_SHORT).show()
+   }
+    R.id.greateNotif -> {
+        Log.d("MyLog", "greateNotif: ")
+        val intent = Intent(context, Notification::class.java)
+        intent.setAction("com.example.myuiroom.MY_ACTION")
         val title = binding?.editNameTask?.text.toString()
         val message = getString(R.string.close_task)
         intent.putExtra(titleExtra, title)
         intent.putExtra(messageExtra, message)
-        intent.putExtra("activity", Notification::class.java)
 
         val pendingIntent = PendingIntent.getBroadcast(
-            requireContext(),
+            context,
             notificationID,
             intent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
+        val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val time = getTime()
+//        val result_SCHEDULE = context?.checkCallingOrSelfPermission("android.permission.SCHEDULE_EXACT_ALARM")
+//        Log.d("MyLog", "test SCHEDULE_EXACT_ALARM, premission $result_SCHEDULE ")
+//        val result_POST = context?.checkCallingOrSelfPermission("android.permission.POST_NOTIFICATIONS")
+//        Log.d("MyLog", "test result_POST, premission $result_POST ")
+
+        alarmManager.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,
+            time,
+            pendingIntent
+        )
 
 
-
-
-        val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-
-
-            val time = getTime()
-            alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                time,
-                pendingIntent
-            )
-            //Toast.makeText(context, getString(R.string.notication_dun), Toast.LENGTH_SHORT).show()
-            // notificationManager?.notify(notification_ID,notification)
-
-            showAlert(time, title, message)
+        showAlert(time, title, message)
+        dismiss()
+    }
+}
 
     }
 
@@ -350,7 +327,7 @@ import java.util.*
         val dateFormat = android.text.format.DateFormat.getLongDateFormat(requireContext())
         val timeFormat = android.text.format.DateFormat.getTimeFormat(requireContext())
 
-        AlertDialog.Builder(context as FragmentActivity)
+        AlertDialog.Builder(context)
             .setTitle("Notification Scheuled")
             .setMessage(
                 "Title: " + title +

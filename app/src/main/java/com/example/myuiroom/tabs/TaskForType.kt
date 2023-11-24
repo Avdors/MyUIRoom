@@ -83,51 +83,12 @@ class TaskForType : Fragment(), View.OnClickListener, Listener {
             time = arguments?.getString("time").toString()
             title = arguments?.getString("title").toString()
             message = arguments?.getString("message").toString()
-           // scheduleNotification()
+
         }
 
 
         return binding?.root
     }
-
-//     @RequiresApi(Build.VERSION_CODES.M)
-//    private fun scheduleNotification() {
-//
-//        Log.d("MyLog", "scheduleNotification: ")
-//        val intent = Intent(context, Notification::class.java)
-//       intent.setAction("com.example.myuiroom.MY_ACTION")
-//       val title = binding?.editNameTask?.text.toString()
-//        val message = getString(R.string.close_task)
-//        intent.putExtra(titleExtra, title)
-//        intent.putExtra(messageExtra, message)
-//       // intent.putExtra("activity", MainActivity::class.java)
-//
-//        val pendingIntent = PendingIntent.getBroadcast(
-//            context,
-//            notificationID,
-//            intent,
-//            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-//        )
-//        val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-//        val time = getTime()
-//        val result_SCHEDULE = context?.checkCallingOrSelfPermission("android.permission.SCHEDULE_EXACT_ALARM")
-//        Log.d("MyLog", "test SCHEDULE_EXACT_ALARM, premission $result_SCHEDULE ")
-//        val result_POST = context?.checkCallingOrSelfPermission("android.permission.POST_NOTIFICATIONS")
-//        Log.d("MyLog", "test result_POST, premission $result_POST ")
-//        //alarmManager.set(AlarmManager.RTC_WAKEUP, time, pendingIntent)
-//      // alarmManager.setExactAndAllowWhileIdle(
-//      // val triggerTime = System.currentTimeMillis() + 10 * 1000
-//            alarmManager.setExactAndAllowWhileIdle(
-//                AlarmManager.RTC_WAKEUP,
-//                time,
-//                pendingIntent
-//            )
-//
-//
-//           showAlert(time, title, message)
-//
-//
-//    }
 
     private fun loadTask() {
         taskViewModel?.tasks?.observe(viewLifecycleOwner, Observer {

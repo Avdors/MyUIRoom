@@ -23,15 +23,20 @@
     <string name="not_imp_and_urgen">NOT IMPORTANT AND NOT URGENT</string>
     <string name="task_edit">EDIT TASK</string>
     <string name="label_enter_name_task">ENTER A TASK NAME</string>
+    <string name="name_task">TASK NAME:</string>
     <string name="label_enter_info_task">ENTER A TASK DESCRIPTION</string>
+    <string name="task_description">TASK DESCRIPTION:</string>
     <string name="enter_date_start">START DATE</string>
     <string name="enter_end_start">END DATE</string>
     <string name="completed">COMPLETED</string>
     <string name="finish_editing">FINISH EDITING</string>
-    <string name="label_choose_task_type">CHOOSE TASK TYPE:</string>
+    <string name="label_choose_task_type">TASK TYPE:</string>
     <string name="error">ERROR</string>
     <string name="greate_a_reminder">GREATE A REMINDER</string>
     <string name="greate_a_notification">GREATE A NOTIFICATION</string>
     <string name="close_task">IT IS TIME TO CLOSE THE TASK</string>
     <string name="notication_dun">NOTIFICATION DUN</string>
+    <string name="uix">UIX</string>
+    <string name="completion_time">COMPLETION TIME</string>
+    <string name="show_notifications">SHOW ALERT</string>
 </resources>

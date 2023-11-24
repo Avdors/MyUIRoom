@@ -47,6 +47,7 @@ class TaskAll : Fragment(), View.OnClickListener, Listener {
         loadTask()
         binding?.buttonAddTask?.setOnClickListener(this)
 
+
         return binding?.root
     }
 

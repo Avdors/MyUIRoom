@@ -5,25 +5,37 @@
     android:id="@+id/cardTask"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp"
-    app:cardElevation="20dp">
+    android:layout_margin="3dp"
+    app:cardElevation="0dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/contentCardTask"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/green"
-        app:cardElevation="20dp">
+        android:background="@color/white"
+        app:cardElevation="0dp">
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/ib_tally"
+            android:layout_width="20dp"
+            android:layout_height="match_parent"
+            android:backgroundTint="@android:color/transparent"
+            android:src="@drawable/tally_1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/nameTask"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/nameTask"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_marginStart="0.5dp"
             android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toEndOf="@+id/ib_tally"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/completeTask"/>
 
 
         <androidx.appcompat.widget.AppCompatImageButton
@@ -33,9 +45,11 @@
             android:layout_margin="1dp"
             android:backgroundTint="@android:color/transparent"
             android:src="@drawable/edit_white_smal"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/completeTask"
             app:layout_constraintTop_toTopOf="parent" />
+
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/completeTask"

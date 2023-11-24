@@ -1,12 +1,15 @@
 package com.example.myuiroom.adapters
 
 import android.content.ClipData
+import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
+import com.example.myuiroom.R
 import com.example.myuiroom.databinding.TaskItemBinding
 import com.example.myuiroom.models.TaskModel
 import com.example.myuiroom.tabs.move.DragListener
@@ -38,10 +41,28 @@ class TaskAdapter (private val listener: Listener, private val completeTask:(Tas
     }
 
     override fun onBindViewHolder(holder: TaskHolder, position: Int) {
-        holder.bind(taskList[position], completeTask, editTask)
+      //  holder.bind(taskList[position], completeTask, editTask)
+        val taskModel = taskList[position]
+        holder.bind(taskModel, completeTask, editTask)
         holder.elementField.tag = position
-        holder.elementField.setOnTouchListener(this)
+        holder.elementField.setOnClickListener{
+            editTask(taskModel) }
+       // holder.elementField.setOnTouchListener(this)
+        holder.elementField.setOnLongClickListener {
+            val data = ClipData.newPlainText("", "")
+            val shadowBuilder = View.DragShadowBuilder(it)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                it.startDragAndDrop(data, shadowBuilder, it, 0)
+            } else {
+                it.startDrag(data, shadowBuilder, it, 0)
+            }
+
+
+            true
+        }
+
         holder.elementField.setOnDragListener(DragListener(listener))
+
     }
 
     fun setList(task: List<TaskModel>) {
@@ -58,12 +79,16 @@ class TaskAdapter (private val listener: Listener, private val completeTask:(Tas
             binding.nameTask.text = taskModel.name
             binding.completeTask.setOnClickListener({
                 completeTask(taskModel) })
-            binding.editTask.setOnClickListener({
-                editTask(taskModel) })
+            if(taskModel.completed == "true"){
+                binding.completeTask.setImageResource(R.drawable.done_all)
+            }
+//            binding.editTask.setOnClickListener({
+//                editTask(taskModel) })
         }
         val elementField = binding.cardTask
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onTouch(v: View, event: MotionEvent): Boolean {
         if (event.action == MotionEvent.ACTION_DOWN) {
             val data = ClipData.newPlainText("", "")

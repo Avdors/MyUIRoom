@@ -9,7 +9,11 @@
     <color name="white">#FFFFFFFF</color>
     <color name="gold">#FFD700</color>
     <color name="green">#A5D6A7</color>
+    <color name="green_medium">#00A884</color>
+    <color name="green_medium_light">#FF27AE91</color>
     <color name="red">#FF5252</color>
     <color name="green_dark">#43A047</color>
     <color name="light_blue">#039BE5</color>
+    <color name="silver">#FF909896</color>
+    <color name="red_light">#FFFF8181</color>
 </resources>

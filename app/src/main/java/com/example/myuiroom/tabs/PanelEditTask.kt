@@ -20,6 +20,7 @@ import android.widget.CheckBox
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.FragmentActivity
@@ -33,6 +34,7 @@ import com.example.myuiroom.notices.*
 import com.example.myuiroom.repositories.TaskRepository
 import com.example.myuiroom.viewModels.TaskFactory
 import com.example.myuiroom.viewModels.TaskViewModel
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -64,6 +66,10 @@ import java.util.*
         TODO("VERSION.SDK_INT < O")
     }
 
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            setStyle(STYLE_NORMAL, R.style.CustomBottomSheetDialog)
+        }
 
     private val dateFormatter: DateTimeFormatter
     init {
@@ -139,6 +145,14 @@ import java.util.*
         }
       //  createNotification()
         binding?.greateNotif?.setOnClickListener(this)
+
+        val numberPicker = binding?.numberPickerDays
+        numberPicker?.minValue = 1
+        numberPicker?.maxValue = 365
+        numberPicker?.value = 1
+
+
+
         return binding?.root
     }
 

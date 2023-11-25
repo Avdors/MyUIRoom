@@ -39,4 +39,5 @@
     <string name="uix">UIX</string>
     <string name="completion_time">COMPLETION TIME</string>
     <string name="show_notifications">SHOW ALERT</string>
+    <string name="in_progres">IN PROGRES</string>
 </resources>

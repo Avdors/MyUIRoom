@@ -9,15 +9,17 @@ import android.graphics.Color
 import android.media.RingtoneManager
 import android.os.Build
 import android.os.Bundle
+import android.speech.RecognizerIntent
+import android.speech.tts.TextToSpeech
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.CheckBox
-import android.widget.Toast
+import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -36,6 +38,7 @@ import com.example.myuiroom.viewModels.TaskFactory
 import com.example.myuiroom.viewModels.TaskViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.textfield.TextInputEditText
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
@@ -59,6 +62,12 @@ import java.util.*
     private var taskViewModel: TaskViewModel? = null
     private var taskFactory: TaskFactory? = null
 
+    //speech
+    //
+    private lateinit var textToSpeech: TextToSpeech
+    private lateinit var editText: EditText
+    private var voiceInputCount = 0
+
     private var firstStart: Boolean = true
     private var currentDate = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         LocalDate.now()
@@ -69,6 +78,7 @@ import java.util.*
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             setStyle(STYLE_NORMAL, R.style.CustomBottomSheetDialog)
+
         }
 
     private val dateFormatter: DateTimeFormatter
@@ -151,11 +161,56 @@ import java.util.*
         numberPicker?.maxValue = 365
         numberPicker?.value = 1
 
+        //speech
+        editText = binding?.editInfoTask!!
+
+        val speechToText = binding?.imbMic
+
+        speechToText?.setOnClickListener{
+            startSpeechToText()
+        }
+        editText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (count == 1 && start == 0) {
+                    editText.removeTextChangedListener(this)
+                    editText.setText(s.toString().replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() })
+                    editText.setSelection(editText.text.length)
+                    editText.addTextChangedListener(this)
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
 
 
         return binding?.root
     }
 
+        //speech
+        private val result = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val results = result.data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS) as ArrayList<String>
+                val newText = results[0].replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+                voiceInputCount++
+                editText.append("$voiceInputCount. $newText\n")
+                editText.setSelection(editText.text.length)
+            }
+        }
+
+        private fun startSpeechToText() {
+            try {
+                val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                    putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                    putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+                    putExtra(RecognizerIntent.EXTRA_PROMPT, "Say something")
+                }
+                result.launch(intent)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     @RequiresApi(Build.VERSION_CODES.O)
     private fun showDatePickerDialog(type:String) {
         val calendar = Calendar.getInstance()

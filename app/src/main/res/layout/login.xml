@@ -62,7 +62,7 @@
     <View
         android:id="@+id/oval_blue"
         android:layout_width="20dp"
-        android:background="@drawable/oval_blue"
+        android:background="@drawable/urgent_blue"
         android:layout_height="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="50dp"
@@ -83,7 +83,7 @@
     <View
         android:id="@+id/oval_red"
         android:layout_width="20dp"
-        android:background="@drawable/oval_red"
+        android:background="@drawable/urgent_and_important_3"
         android:layout_height="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="50dp"
@@ -105,7 +105,7 @@
     <View
         android:id="@+id/oval_green"
         android:layout_width="20dp"
-        android:background="@drawable/oval_green"
+        android:background="@drawable/relax_urg"
         android:layout_height="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="50dp"
@@ -126,7 +126,7 @@
     <View
         android:id="@+id/oval_gold"
         android:layout_width="20dp"
-        android:background="@drawable/oval_gold"
+        android:background="@drawable/urgent_urg"
         android:layout_height="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="50dp"

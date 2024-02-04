@@ -6,4 +6,12 @@
         <item>importantAndUrgent</item>
         <item>notimportantAndUrgent</item>
     </string-array>
+
+    <string-array name="category">
+        <item>family</item>
+        <item>job</item>
+        <item>study</item>
+        <item>health</item>
+        <item>everything</item>
+    </string-array>
 </resources>

@@ -3,24 +3,23 @@ package com.example.myuiroom.tabs
 import android.app.*
 
 import android.content.Context
-import android.content.Context.NOTIFICATION_SERVICE
+import android.content.DialogInterface
 import android.content.Intent
-import android.graphics.Color
-import android.media.RingtoneManager
-import android.os.Build
-import android.os.Bundle
+import android.net.Uri
+import android.os.*
+import android.provider.Settings
 import android.speech.RecognizerIntent
 import android.speech.tts.TextToSpeech
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.appcompat.widget.AppCompatImageButton
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.NotificationCompat
@@ -32,27 +31,37 @@ import com.example.myuiroom.Notification
 
 import com.example.myuiroom.data.Database
 import com.example.myuiroom.databinding.PanelEditTaskBinding
+import com.example.myuiroom.models.FileModel
+import com.example.myuiroom.models.TaskModel
 import com.example.myuiroom.notices.*
 import com.example.myuiroom.repositories.TaskRepository
+
 import com.example.myuiroom.viewModels.TaskFactory
 import com.example.myuiroom.viewModels.TaskViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.io.File
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
+import java.time.format.DateTimeParseException
 import java.time.temporal.ChronoField
 import java.util.*
 
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    class PanelEditTask : BottomSheetDialogFragment(), View.OnClickListener{
+    class PanelEditTask : BottomSheetDialogFragment(), View.OnClickListener, CustomTimePicker.TimePickerListener{
     private var binding: PanelEditTaskBinding? = null
     private var nameFormParent: String? = ""
     private var taskAction: String? = ""
     private var complet: String? = null
+    private var category: String? = null
 
     private var idTask: Int? = null
     private var email: String? = "test"
@@ -62,6 +71,16 @@ import java.util.*
     private var taskViewModel: TaskViewModel? = null
     private var taskFactory: TaskFactory? = null
 
+        private var dayTask: Int? = 0
+        private var hourTask: Int? = 12
+        private var minuteTask: Int? = 0
+        private var showAlertStr: String? = "false"
+
+        private var scheduleNotification: ScheduleNotification? = null
+        lateinit var  ibFamily: AppCompatTextView
+
+        // для работы обратного вызова при закрытии этой панели
+        private var dismissListener: PanelEditTaskDismissListener? = null
     //speech
     //
     private lateinit var textToSpeech: TextToSpeech
@@ -71,16 +90,15 @@ import java.util.*
     private var firstStart: Boolean = true
     private var currentDate = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         LocalDate.now()
+        Log.d("LogPanel", "LocalDate")
     } else {
         TODO("VERSION.SDK_INT < O")
     }
-
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             setStyle(STYLE_NORMAL, R.style.CustomBottomSheetDialog)
-
+            Log.d("LogPanel", "onCreate")
         }
-
     private val dateFormatter: DateTimeFormatter
     init {
         dateFormatter = DateTimeFormatterBuilder()
@@ -91,25 +109,54 @@ import java.util.*
             .appendValue(ChronoField.DAY_OF_MONTH, 2)
             .toFormatter()
     }
-
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        Log.d("LogPanel", "onCreateView1")
         binding = PanelEditTaskBinding.inflate(inflater, container, false)
+        Log.d("LogPanel", "onCreateView2")
         taskAction = arguments?.getString("taskAction").toString()
         nameFormParent = arguments?.getString("nameForm").toString()
         binding?.DateStartTask?.setText(arguments?.getString("dateStart").toString())
         complet = arguments?.getString("completed").toString()
+        category = arguments?.getString("category").toString()
+
+        categoryBottonSelected()
+
+        var dayTaskStr = arguments?.getString("dayTask").toString()
+        val hourTaskStr = arguments?.getString("hourTask").toString()
+        val minuteTaskStr = arguments?.getString("minuteTask").toString()
+
+        if(dayTaskStr == "null" ){
+            dayTaskStr = "0"
+
+        }
+        showAlertStr = arguments?.getString("showAlertStr").toString()
+        dayTask = dayTaskStr?.toIntOrNull() ?: 0
+        hourTask = hourTaskStr?.toIntOrNull() ?: 12
+        minuteTask = minuteTaskStr?.toIntOrNull() ?: 0
+        Log.d("LogPanel", "dayTaskStr $dayTaskStr")
+        binding?.numberPickerDays?.setText(dayTaskStr)
+        Log.d("LogPanel", "onCreateView6")
         if (complet == "true"){
 
             binding?.checkBoxCompleted?.isChecked = true
             binding?.DateEndTask?.setText(arguments?.getString("dateEnd").toString())
         }
         else {
-            binding?.DateEndTask?.setText(getString(R.string.enter_end_start))
+            binding?.DateEndTask?.setText(getString(R.string.in_progres))
             binding?.checkBoxCompleted?.isChecked = false}
+        if(showAlertStr == "true"){
+            binding?.checkBoxNotification?.isChecked = true
+            val time = getTime()
+            dateNotification(time)
+        }else {
+            //binding?.infoNotification?.text = ""
+            binding?.infoNotification?.visibility = View.GONE
+        }
         if(taskAction == "Edit") {
             idTask = arguments?.getString("idTask")?.toInt()
             binding?.editNameTask?.setText(arguments?.getString("nameTask").toString())
@@ -125,18 +172,34 @@ import java.util.*
                 email = savedValue
             }
         }
-
+        Log.d("LogPanel", "onCreateView7")
         val taskDao = Database.getInstance((context as FragmentActivity).application).taskDao
         taskRepository = TaskRepository(taskDao)
         taskFactory = TaskFactory(taskRepository!!)
         taskViewModel = ViewModelProvider(this, taskFactory!!).get(TaskViewModel::class.java)
         spinerProcessing()
+        Log.d("LogPanel", "onCreateView8")
+        scheduleNotification = ScheduleNotification()
 
-
-       // createNotification()
         binding?.finishEdit?.setOnClickListener(this)
+        binding?.ibClose?.setOnClickListener(this)
+        binding?.ibFile?.setOnClickListener(this)
+        binding?.ibDelete?.setOnClickListener(this)
+        binding?.ibShare?.setOnClickListener{
+            val name = binding?.editNameTask?.text.toString().trim()
+            val info = binding?.editInfoTask?.text.toString().trim()
+            val taskNameLabel = getString(R.string.name_task)
+            val taskDescriptionLabel = getString(R.string.task_description)
 
+            val combinedText = "$taskNameLabel $name\n$taskDescriptionLabel $info"
 
+            shareText(combinedText)
+        }
+        binding?.numberPickerDays?.setOnClickListener{
+            val dayPickerFragment = CustomTimePicker()
+            dayPickerFragment.setTimePickerListener(this)
+            dayPickerFragment.show(parentFragmentManager, "timePicker")
+        }
         binding?.checkBoxCompleted?.setOnCheckedChangeListener{ buttonView, isChecked ->
           if(isChecked){
               binding?.DateEndTask?.setText(currentDate.toString())
@@ -153,14 +216,23 @@ import java.util.*
         binding?.DateStartTask?.setOnClickListener{
             showDatePickerDialog("Start")
         }
-      //  createNotification()
-        binding?.greateNotif?.setOnClickListener(this)
 
-        val numberPicker = binding?.numberPickerDays
-        numberPicker?.minValue = 1
-        numberPicker?.maxValue = 365
-        numberPicker?.value = 1
+        //binding?.greateNotif?.setOnClickListener(this)
 
+        binding?.checkBoxNotification?.setOnCheckedChangeListener{ buttonView, isChecked ->
+          if(isChecked){
+              showAlertStr = "true"
+          }
+            else {
+              showAlertStr = "false"
+
+          }
+           if (areNotificationsEnabled(requireContext()) != true){
+               showNotificationSettingsDialog(requireContext())
+           }
+
+        }
+        Log.d("LogPanel", "onCreateView9")
         //speech
         editText = binding?.editInfoTask!!
 
@@ -185,8 +257,106 @@ import java.util.*
         })
 
 
+        // Initialize buttons
+        val ibFamily = binding?.ibFamily
+        val ibJob = binding?.ibJob
+        val ibMedical = binding?.ibHealth
+        val ibTable = binding?.ibStudy
+        val ibEverything = binding?.ibEverything
+        // ... other buttons
+
+        // Click listeners
+        val buttons = listOf(ibFamily, ibJob, ibMedical, ibEverything, ibTable)
+        buttons.forEach { button ->
+            button?.setOnClickListener {
+                // Deselect all buttons
+                buttons.forEach { it?.isSelected = false }
+
+                // Select the clicked button
+                button.isSelected = true
+
+                // Handle the button click event
+                handleButtonClick(button.id)
+            }
+        }
+
+        Log.d("LogPanel", "onCreateView10")
         return binding?.root
     }
+
+        fun setDismissListener(listener: PanelEditTaskDismissListener) {
+            dismissListener = listener
+        }
+
+        override fun onDismiss(dialog: DialogInterface) {
+            super.onDismiss(dialog)
+            dismissListener?.onPanelEditTaskDismissed()
+        }
+        private fun shareText(text: String) {
+
+            val shareIntent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, text)
+                type = "text/plain"
+            }
+            startActivity(Intent.createChooser(shareIntent, null))
+        }
+        fun showCustomToast(context: Context, message: String) {
+            val toast = Toast.makeText(context, message, Toast.LENGTH_SHORT)
+            toast.show()
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                toast.cancel()
+            }, 800) // Display toast for 1000 milliseconds
+        }
+
+        private fun categoryBottonSelected(){
+        when(category){
+            "family" -> {
+            binding?.ibFamily?.isSelected = true
+            }
+            "job" -> {
+                binding?.ibJob?.isSelected = true
+            }
+            "study" -> {
+                binding?.ibStudy?.isSelected = true
+            }
+            "health" -> {
+                binding?.ibHealth?.isSelected = true
+            }
+            "everything" -> {
+                binding?.ibEverything?.isSelected = true
+            }
+        }
+
+
+        }
+
+        private fun handleButtonClick(buttonId: Int) {
+
+
+
+            when (buttonId) {
+                R.id.ib_family -> category = "family"
+                R.id.ib_job -> category = "job"
+                R.id.ib_study -> category = "study"
+                R.id.ib_health -> category = "health"
+                R.id.ib_everything -> category = "everything"
+                // Add other cases as needed
+            }
+
+            // Show toast for category selection
+            showCustomToast(requireContext(), getString(R.string.you_selected_categoru) + " " + category)
+
+            // Create or update the task based on whether it exists
+            if (idTask == null) {
+                createTask() // Ensure this method now correctly sets idTask
+            } else {
+                updateTask() // This should now only update the existing task, including setting its category
+            }
+
+
+        }
 
         //speech
         private val result = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -199,6 +369,58 @@ import java.util.*
             }
         }
 
+        private fun checkBatteryOptimizations(context: Context) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+                if (!powerManager.isIgnoringBatteryOptimizations(context.packageName)) {
+                    AlertDialog.Builder(requireContext())
+                        .setTitle("Disable Battery Optimizations")
+                        .setMessage("Please disable battery optimizations for reliable notifications.")
+                        .setPositiveButton("Settings") { _, _ ->
+                            val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
+                                data = Uri.parse("package:${context.packageName}")
+                            }
+                            startActivity(intent)
+                        }
+                        .setNegativeButton("Cancel", null)
+                        .show()
+                }
+            }
+        }
+        private fun showNotificationSettingsDialog(context: Context) {
+            AlertDialog.Builder(context)
+                .setTitle(getString(R.string.enable_notifications))
+                .setMessage(getString(R.string.please_enable_settings))
+                .setPositiveButton(getString(R.string.settings)) { dialog, _ ->
+                    openNotificationSettings(context)
+                    dialog.dismiss()
+                }
+                .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .show()
+        }
+        private fun openNotificationSettings(context: Context) {
+            val intent = Intent().apply {
+                when {
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> {
+                        action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
+                        putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                    }
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> {
+                        action = "android.settings.APP_NOTIFICATION_SETTINGS"
+                        putExtra("app_package", context.packageName)
+                        putExtra("app_uid", context.applicationInfo.uid)
+                    }
+                    else -> {
+                        action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                        addCategory(Intent.CATEGORY_DEFAULT)
+                        data = Uri.parse("package:" + context.packageName)
+                    }
+                }
+            }
+            context.startActivity(intent)
+        }
         private fun startSpeechToText() {
             try {
                 val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
@@ -211,7 +433,7 @@ import java.util.*
                 e.printStackTrace()
             }
         }
-    @RequiresApi(Build.VERSION_CODES.O)
+       @RequiresApi(Build.VERSION_CODES.O)
     private fun showDatePickerDialog(type:String) {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
@@ -226,7 +448,6 @@ import java.util.*
         else if(type == "Start"){
             dateTextView = binding?.DateStartTask as AppCompatTextView
         }
-
         if(dateTextView != null) {
             val datePickerDialog = DatePickerDialog(
                 context as FragmentActivity,
@@ -239,11 +460,9 @@ import java.util.*
                 month,
                 day
             )
-
             datePickerDialog.show()
         }
     }
-
     fun spinerProcessing(){
         val taskTypeSpinner = binding?.taskTypeSpinner
         val taskTypes = resources.getStringArray(R.array.type)
@@ -270,7 +489,6 @@ import java.util.*
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 TODO("Not yet implemented")
             }
-
         }
     }
     override fun onClick(view: View) {
@@ -281,113 +499,194 @@ import java.util.*
        } else {
            complet = ""
        }
-       if (binding?.editNameTask?.text?.toString()!!.isNotEmpty() and
-           email.toString().isNotEmpty() and typeTask.toString().isNotEmpty() and
-           binding?.editInfoTask?.text?.toString()!!.isNotEmpty() and
+
+
+       if (
            binding?.DateStartTask?.text?.toString()!!.isNotEmpty() and
            binding?.DateEndTask?.text?.toString()!!.isNotEmpty()
        ) {
 
            if (nameFormParent == "TaskAll" && taskAction != "Edit") {
 
-               taskViewModel?.startInsert(
-                   binding?.editNameTask?.text?.toString()!!,
-                   email.toString(),
-                   typeTask.toString(),
-                   binding?.editInfoTask?.text?.toString()!!,
-                   binding?.DateStartTask?.text?.toString()!!,
-                   binding?.DateEndTask?.text?.toString()!!,
-                   complet.toString()
-               )
+
+               createTask()
                dismiss()
                (context as FragmentActivity).supportFragmentManager.beginTransaction()
                    .replace(R.id.content, TaskAll()).commit()
            } else if (nameFormParent == "TaskAll" && taskAction == "Edit") {
-               if (idTask != null) {
-                   taskViewModel?.startUpdateTask(
-                       idTask?.toInt()!!,
-                       binding?.editNameTask?.text?.toString()!!,
-                       email.toString(),
-                       typeTask.toString(),
-                       binding?.editInfoTask?.text?.toString()!!,
-                       binding?.DateStartTask?.text?.toString()!!,
-                       binding?.DateEndTask?.text?.toString()!!,
-                       complet.toString()
-                   )
-               }
+
+               updateTask()
+
                dismiss()
                (context as FragmentActivity).supportFragmentManager.beginTransaction()
                    .replace(R.id.content, TaskAll()).commit()
            } else if (nameFormParent == "TaskForType" && taskAction == "Edit") {
-               if (idTask != null) {
-                   taskViewModel?.startUpdateTask(
-                       idTask?.toInt()!!,
-                       binding?.editNameTask?.text?.toString()!!,
-                       email.toString(),
-                       typeTask.toString(),
-                       binding?.editInfoTask?.text?.toString()!!,
-                       binding?.DateStartTask?.text?.toString()!!,
-                       binding?.DateEndTask?.text?.toString()!!,
-                       complet.toString()
-                   )
+
+               updateTask()
+
+               if (showAlertStr == "true") {
+                   grateNotification()
                }
                dismiss()
                (context as FragmentActivity).supportFragmentManager.beginTransaction()
                    .replace(R.id.content, TaskForType()).commit()
            } else if (nameFormParent == "TaskForType" && taskAction != "Edit") {
 
-               taskViewModel?.startInsert(
-                   binding?.editNameTask?.text?.toString()!!,
-                   email.toString(),
-                   typeTask.toString(),
-                   binding?.editInfoTask?.text?.toString()!!,
-                   binding?.DateStartTask?.text?.toString()!!,
-                   binding?.DateEndTask?.text?.toString()!!,
-                   complet.toString()
-               )
+
+               createTask()
+               //grateNotification()
                dismiss()
 
                (context as FragmentActivity).supportFragmentManager.beginTransaction()
                    .replace(R.id.content, TaskForType()).commit()
+
+
            }
 
 
        } else
            Toast.makeText(context, getString(R.string.error), Toast.LENGTH_SHORT).show()
    }
-    R.id.greateNotif -> {
-        Log.d("MyLog", "greateNotif: ")
-        val intent = Intent(context, Notification::class.java)
-        intent.setAction("com.example.myuiroom.MY_ACTION")
-        val title = binding?.editNameTask?.text.toString()
-        val message = getString(R.string.close_task)
-        intent.putExtra(titleExtra, title)
-        intent.putExtra(messageExtra, message)
+        R.id.ib_close ->{
+            dismiss()
 
-        val pendingIntent = PendingIntent.getBroadcast(
-            context,
-            notificationID,
-            intent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        )
-        val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val time = getTime()
-//        val result_SCHEDULE = context?.checkCallingOrSelfPermission("android.permission.SCHEDULE_EXACT_ALARM")
-//        Log.d("MyLog", "test SCHEDULE_EXACT_ALARM, premission $result_SCHEDULE ")
-//        val result_POST = context?.checkCallingOrSelfPermission("android.permission.POST_NOTIFICATIONS")
-//        Log.d("MyLog", "test result_POST, premission $result_POST ")
+        }
+        R.id.ib_file ->{
+            if(idTask != null) {
+ //               dismiss()
+                val addFile = AddFile()
+                val parameters = Bundle()
+                addFile.arguments = parameters
+                parameters.putInt("idTask", idTask!!)
+//                (context as FragmentActivity).supportFragmentManager.beginTransaction()
+//                    .replace(R.id.content, addFile).commit()
+                addFile.show((context as FragmentActivity).supportFragmentManager, "addFile")
+            }
+        }
+        R.id.ib_delete ->{
+            if (idTask != null && nameFormParent == "TaskForType") {
 
-        alarmManager.setExactAndAllowWhileIdle(
-            AlarmManager.RTC_WAKEUP,
-            time,
-            pendingIntent
-        )
+                showConfirmationDialog(getString(R.string.file_deletion), getString(R.string.question_delete))
 
 
-        showAlert(time, title, message)
-        dismiss()
+
+            }else{
+                dismiss()
+                if (nameFormParent == "TaskForType") {
+                    (context as FragmentActivity).supportFragmentManager.beginTransaction()
+                        .replace(R.id.content, TaskForType()).commit()
+                }else{
+                    (context as FragmentActivity).supportFragmentManager.beginTransaction()
+                        .replace(R.id.content, TaskAll()).commit()
+                }
+            }
+        }
+
     }
-}
+
+    }
+
+
+        private fun createTask(){
+
+            //проверка на случай незаполнения обязательных полей
+            if(binding?.editNameTask?.text?.isEmpty() == true){
+                binding?.editNameTask?.setText(getString(R.string.unnamed_task))
+            }
+            if(binding?.editInfoTask?.text?.isEmpty() == true){
+                binding?.editInfoTask?.setText(getString(R.string.one))
+            }
+
+
+            taskViewModel?.startInsert(
+                binding?.editNameTask?.text?.toString()!!,
+                email.toString(),
+                typeTask.toString(),
+                binding?.editInfoTask?.text?.toString()!!,
+                binding?.DateStartTask?.text?.toString()!!,
+                binding?.DateEndTask?.text?.toString()!!,
+                complet.toString(),
+                dayTask!!,
+                hourTask!!,
+                minuteTask!!,
+                showAlertStr.toString()
+            ) { taskId ->
+                idTask = taskId.toInt() // Set the generated task ID
+                if (showAlertStr == "true") {
+                    grateNotification()
+                }
+            }
+        }
+        private fun updateTask(){
+            if (idTask != null) {
+                taskViewModel?.startUpdateTask(
+                    idTask?.toInt()!!,
+                    binding?.editNameTask?.text?.toString()!!,
+                    email.toString(),
+                    typeTask.toString(),
+                    binding?.editInfoTask?.text?.toString()!!,
+                    binding?.DateStartTask?.text?.toString()!!,
+                    binding?.DateEndTask?.text?.toString()!!,
+                    complet.toString(),
+                    dayTask!!,
+                    hourTask!!,
+                    minuteTask!!,
+                    showAlertStr.toString(),
+                    category.toString()
+                )
+            }
+        }
+        private fun deleteTask(){
+            taskViewModel?.deleteTask(TaskModel(
+                idTask?.toInt()!!,
+                binding?.editNameTask?.text?.toString()!!,
+                email.toString(),
+                typeTask.toString(),
+                binding?.editInfoTask?.text?.toString()!!,
+                binding?.DateStartTask?.text?.toString()!!,
+                binding?.DateEndTask?.text?.toString()!!,
+                complet.toString(),
+                dayTask!!,
+                hourTask!!,
+                minuteTask!!,
+                showAlertStr.toString(),
+                category.toString()
+            ))
+            dismiss()
+            if (nameFormParent == "TaskForType") {
+                (context as FragmentActivity).supportFragmentManager.beginTransaction()
+                    .replace(R.id.content, TaskForType()).commit()
+            }else{
+                (context as FragmentActivity).supportFragmentManager.beginTransaction()
+                    .replace(R.id.content, TaskAll()).commit()
+            }
+        }
+
+
+    // Проверяю есть ли разрешение на уведомления
+        @RequiresApi(Build.VERSION_CODES.Q)
+        private fun areNotificationsEnabled(context: Context): Boolean {
+        Log.d("LogPanel", "areNotificationsEnabled1")
+            val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                Log.d("LogPanel", "areNotificationsEnabled2")
+                return notificationManager.areNotificationsEnabled()
+            } else {
+                val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
+                val appInfo = context.applicationInfo
+                val pkg = context.applicationContext.packageName
+                val uid = appInfo.uid
+                Log.d("LogPanel", "areNotificationsEnabled2")
+                return appOps.unsafeCheckOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, uid, pkg) == AppOpsManager.MODE_ALLOWED
+            }
+        }
+    private fun grateNotification(){
+
+        val time = getTime()
+
+        scheduleNotification?.createNotifForTime(requireContext(), idTask!!, time, binding?.editNameTask?.text.toString())
+
+        showAlert(time, getString(R.string.close_task), binding?.editNameTask?.text.toString())
 
     }
 
@@ -397,26 +696,109 @@ import java.util.*
         val timeFormat = android.text.format.DateFormat.getTimeFormat(requireContext())
 
         AlertDialog.Builder(context)
-            .setTitle("Notification Scheuled")
+            .setTitle(getString(R.string.notifications_will_send))
             .setMessage(
                 "Title: " + title +
                         "\nMessage: " + message +
                         "\nAt: " + dateFormat.format(date) + " " + timeFormat.format(date)
             )
-            .setPositiveButton("Okay"){_,_ ->}
+            .setPositiveButton(getString(R.string.okkay)){_,_ ->}
             .show()
     }
 
-    private fun getTime(): Long {
-        val minute = binding?.timePicker?.minute
-        val hour = binding?.timePicker?.hour
-        val day = binding?.datePicker?.dayOfMonth
-        val month = binding?.datePicker?.month
-        val year = binding?.datePicker?.year
+        private fun showConfirmationDialog(title: String, message: String) {
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle(title)
+            builder.setMessage(message)
 
+            builder.setPositiveButton("Yes") { dialog, which ->
+                Log.d("SQLLog", "PanelEditTask showConfirmationDialog idTask ${idTask?.toInt()!!}")
+                Log.d("SQLLog", "PanelEditTask showConfirmationDialog taskViewModel ${taskViewModel}")
+               val modelTask =  TaskModel(
+                    idTask?.toInt()!!,
+                    binding?.editNameTask?.text?.toString()!!,
+                    email.toString(),
+                    typeTask.toString(),
+                    binding?.editInfoTask?.text?.toString()!!,
+                    binding?.DateStartTask?.text?.toString()!!,
+                    binding?.DateEndTask?.text?.toString()!!,
+                    complet.toString(),
+                    dayTask!!,
+                    hourTask!!,
+                    minuteTask!!,
+                    showAlertStr.toString(),
+                    category.toString())
+
+                taskViewModel?.loadUniqueFiles(idTask?.toInt()!!, modelTask)
+
+//                    if (nameFormParent == "TaskForType") {
+//                       // deleteTask()
+//                        val fragmentTask = TaskForType()
+//                        val parameters = Bundle()
+//                        parameters.putString("idTaskDelete", idTask.toString())
+//                        fragmentTask.arguments = parameters
+//                        (context as FragmentActivity).supportFragmentManager.beginTransaction()
+//                            .replace(R.id.content, fragmentTask).commit()
+//                    }else{
+//                        var fragmentTask = TaskAll()
+//                    }
+                   // dismiss()
+
+
+
+            }
+
+            builder.setNegativeButton("No") { dialog, which ->
+                // User clicked "No" button, do nothing
+                dialog.dismiss()
+            }
+
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
+        }
+
+    private fun dateNotification(time: Long) {
+            val date = Date(time)
+            val dateFormat = android.text.format.DateFormat.getLongDateFormat(requireContext())
+            val timeFormat = android.text.format.DateFormat.getTimeFormat(requireContext())
+
+            binding?.infoNotification?.setText("A reminder to close the task will be displayed: " + dateFormat.format(date) + " " + timeFormat.format(date))
+
+    }
+
+    private fun getTime(): Long {
         val calendar = Calendar.getInstance()
-        calendar.set(year!!, month!!,day!!,hour!!,minute!!)
+        //calendar.set(year!!, month!!,day!!,hour!!,minute!!)
+
+        // We Replacing the procedure with a new scheme
+
+        val startDateText = binding?.DateStartTask?.text.toString()
+        try {
+            val parsedDate = LocalDate.parse(startDateText, dateFormatter)
+            calendar.set(parsedDate.year, parsedDate.monthValue - 1, parsedDate.dayOfMonth)
+        } catch (e: DateTimeParseException) {
+            Log.e("PanelEditTask", "Error parsing start date: $startDateText", e)
+            // Handle the error, perhaps by using the current date or notifying the user
+        }
+        calendar.add(Calendar.DAY_OF_MONTH, dayTask ?: 0)
+
+
+        calendar.set(Calendar.HOUR_OF_DAY, hourTask ?: 12)
+        calendar.set(Calendar.MINUTE, minuteTask ?: 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+
+
         return calendar.timeInMillis
 
     }
-}
+
+        override fun onTimeSet(day: Int, hourOfDay: Int, minute: Int) {
+            binding?.numberPickerDays?.setText(day.toString())
+            dayTask = day
+            hourTask = hourOfDay
+            minuteTask = minute
+        }
+
+
+    }

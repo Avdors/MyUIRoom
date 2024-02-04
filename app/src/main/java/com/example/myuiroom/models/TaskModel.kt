@@ -30,5 +30,20 @@ class TaskModel (
     var dateEnd : String,
 
     @ColumnInfo(name = "task_completed")
-    var completed : String
+    var completed : String,
+
+    @ColumnInfo(name = "task_day")
+    var day : Int,
+
+    @ColumnInfo(name = "task_hourOfDay")
+    var hourOfDay : Int,
+
+    @ColumnInfo(name = "task_minute")
+    var minute : Int,
+
+    @ColumnInfo(name = "task_show_alert")
+    var show_alert : String,
+
+    @ColumnInfo(name = "task_category")
+    var category : String
 )

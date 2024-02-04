@@ -10,7 +10,7 @@
     <FrameLayout
         android:id="@+id/content"
         android:layout_width="match_parent"
-        android:layout_height="90dp"
+        android:layout_height="120dp"
         android:background="@color/green_medium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -42,6 +42,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
+
+
+<com.airbnb.lottie.LottieAnimationView
+    android:id="@+id/animation"
+    android:layout_width="100dp"
+    android:layout_height="100dp"
+    app:lottie_rawRes="@raw/test1"
+    app:lottie_autoPlay="true"
+    app:lottie_loop="true"/>
+
 
     </FrameLayout>
 

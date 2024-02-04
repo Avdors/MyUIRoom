@@ -1,5 +1,6 @@
 package com.example.myuiroom.tabs
 
+import android.app.AlertDialog
 import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -32,6 +33,7 @@ class TaskAll : Fragment(), View.OnClickListener, Listener {
     private var taskAdapter: TaskAdapter? = null
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -43,10 +45,11 @@ class TaskAll : Fragment(), View.OnClickListener, Listener {
         taskFactory = TaskFactory(taskRepository!!)
         taskViewModel = ViewModelProvider(this, taskFactory!!).get(TaskViewModel::class.java)
         // Inflate the layout for this fragment
+
         initRecyclerProducts()
         loadTask()
         binding?.buttonAddTask?.setOnClickListener(this)
-
+       // binding?.animation?.setAnimation("test1.json")
 
         return binding?.root
     }
@@ -58,10 +61,11 @@ class TaskAll : Fragment(), View.OnClickListener, Listener {
         })
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun initRecyclerProducts() {
         binding?.recyclerTask?.layoutManager = LinearLayoutManager(context)
         taskAdapter = TaskAdapter(this, {taskModel: TaskModel ->  completeTask(taskModel)  },
-            {taskModel: TaskModel -> editTask(taskModel)  })
+            {taskModel: TaskModel -> editTask(taskModel)  },{taskModel: TaskModel -> showDeleteConfirmationDialog(taskModel)  }, true)
         binding?.recyclerTask?.adapter = taskAdapter
     }
 
@@ -81,11 +85,41 @@ class TaskAll : Fragment(), View.OnClickListener, Listener {
         parameters.putString("dateStart", taskModel.dateStart.toString())
         parameters.putString("dateEnd", taskModel.dateEnd.toString())
         parameters.putString("completed", taskModel.completed.toString())
+        parameters.putString("category", taskModel.category.toString())
         parameters.putString("nameForm", "TaskAll")
         parameters.putString("taskAction", "Edit")
         panelEditTask.arguments = parameters
 
         panelEditTask.show((context as FragmentActivity).supportFragmentManager, "editTask")
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun deleteTask(taskModel: TaskModel) {
+
+        taskViewModel?.deleteTask(taskModel)?.let {
+            // Refresh the list after the task is deleted.
+            // Since deleteTask is a suspend function, we don't need to observe it
+            loadTask()
+        }
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun showDeleteConfirmationDialog(taskModel: TaskModel) {
+        val title = getString(R.string.task_deletion)
+        val message = getString(R.string.question_delete_task)
+        val delete = getString(R.string.delete)
+        val cancel = getString(R.string.cancel)
+        val alertDialog = AlertDialog.Builder(requireContext())
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton(delete) { dialog, which ->
+                deleteTask(taskModel)
+            }
+            .setNegativeButton(cancel, null)
+            .create()
+
+        alertDialog.show()
     }
 
 
@@ -105,10 +139,9 @@ class TaskAll : Fragment(), View.OnClickListener, Listener {
                 parameters.putString("completed", "")
                 parameters.putString("nameForm", "TaskAll")
                 parameters.putString("taskAction", "Add")
+                parameters.putString("category", "everything")
                 panelEditTask.arguments = parameters
                 panelEditTask.show((context as FragmentActivity).supportFragmentManager, "addTask")
-
-
             }
 
         }

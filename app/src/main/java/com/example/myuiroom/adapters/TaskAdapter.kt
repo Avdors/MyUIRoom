@@ -14,17 +14,17 @@ import com.example.myuiroom.databinding.TaskItemBinding
 import com.example.myuiroom.models.TaskModel
 import com.example.myuiroom.tabs.move.DragListener
 import com.example.myuiroom.tabs.move.Listener
-import java.text.FieldPosition
 
 class TaskAdapter (private val listener: Listener, private val completeTask:(TaskModel)->Unit,
-                   private val editTask:(TaskModel)->Unit) : RecyclerView.Adapter<TaskAdapter.TaskHolder>(), View.OnTouchListener {
+                   private val editTask:(TaskModel)->Unit, private val deleteTask: (TaskModel) -> Unit, private val isDeleteVisible: Boolean) : RecyclerView.Adapter<TaskAdapter.TaskHolder>(), View.OnTouchListener {
 
     private var taskList = ArrayList<TaskModel>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskHolder {
 
         val binding : TaskItemBinding = TaskItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return TaskHolder(binding)
+
+        return TaskHolder(binding, isDeleteVisible)
     }
 
     override fun getItemCount(): Int {
@@ -43,10 +43,11 @@ class TaskAdapter (private val listener: Listener, private val completeTask:(Tas
     override fun onBindViewHolder(holder: TaskHolder, position: Int) {
       //  holder.bind(taskList[position], completeTask, editTask)
         val taskModel = taskList[position]
-        holder.bind(taskModel, completeTask, editTask)
+        holder.bind(taskModel, completeTask, editTask, deleteTask)
         holder.elementField.tag = position
         holder.elementField.setOnClickListener{
             editTask(taskModel) }
+
        // holder.elementField.setOnTouchListener(this)
         holder.elementField.setOnLongClickListener {
             val data = ClipData.newPlainText("", "")
@@ -70,21 +71,37 @@ class TaskAdapter (private val listener: Listener, private val completeTask:(Tas
         taskList.addAll(task)
     }
 
-    class TaskHolder(val binding: TaskItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    class TaskHolder(val binding: TaskItemBinding, private val isDeleteVisible: Boolean) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(taskModel: TaskModel,
                  completeTask: (TaskModel) -> Unit,
-                 editTask: (TaskModel) -> Unit
+                 editTask: (TaskModel) -> Unit,
+                 deleteTask: (TaskModel) -> Unit
         ) {
             binding.nameTask.text = taskModel.name
+            binding.deleteTask.visibility = if (isDeleteVisible) View.VISIBLE else View.GONE
             binding.completeTask.setOnClickListener({
-                completeTask(taskModel) })
+                completeTask(taskModel) }, )
+            binding.deleteTask.setOnClickListener({deleteTask(taskModel)})
             if(taskModel.completed == "true"){
                 binding.completeTask.setImageResource(R.drawable.done_all)
             }
 //            binding.editTask.setOnClickListener({
 //                editTask(taskModel) })
+            when (taskModel.category) {
+                "family" -> binding.ibCategory.setImageResource(R.drawable.happy_house__16)
+                "job" -> binding.ibCategory.setImageResource(R.drawable.job_seeker_16)
+                "study" -> binding.ibCategory.setImageResource(R.drawable.table_16)
+                "health" -> binding.ibCategory.setImageResource(R.drawable.medical_check_16)
+                "everything" -> binding.ibCategory.setImageResource(R.drawable.testing_16)
+                // Add more categories as needed
+                else -> binding.ibCategory.setImageResource(R.drawable.testing_16) // default icon
+            }
+
+
+
         }
+
         val elementField = binding.cardTask
     }
 

@@ -13,18 +13,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
-        app:cardElevation="0dp">
+        app:cardElevation="0dp"
+        >
 
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/ib_tally"
-            android:layout_width="20dp"
-            android:layout_height="match_parent"
-            android:backgroundTint="@android:color/transparent"
-            android:src="@drawable/tally_1"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/nameTask"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/nameTask"
@@ -32,19 +24,33 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="0.5dp"
             android:textColor="@color/black"
+            android:maxWidth="60dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/ib_tally"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/completeTask"/>
-
+            app:layout_constraintEnd_toStartOf="@+id/ib_category"
+            android:maxLines="2"
+            android:ellipsize="end" />
 
         <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/editTask"
+            android:id="@+id/ib_category"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:backgroundTint="@android:color/transparent"
+            android:src="@drawable/happy_house__16"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/deleteTask"
+            app:layout_constraintStart_toEndOf="@+id/nameTask"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/deleteTask"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="1dp"
             android:backgroundTint="@android:color/transparent"
-            android:src="@drawable/edit_white_smal"
+            android:src="@drawable/delete_task"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/completeTask"

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:context=".tabs.CustomTimePicker"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/tv_completion_day"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/completion_day"
+        android:textStyle="bold"
+        android:textSize="12sp"
+        android:layout_marginStart="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <NumberPicker
+        android:id="@+id/dayPicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_completion_day" />
+
+    <TextView
+        android:id="@+id/tv_completion_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/completion_time"
+        android:textStyle="bold"
+        android:textSize="12sp"
+        android:layout_marginStart="10dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/hourPicker"/>
+
+
+    <NumberPicker
+        android:id="@+id/hourPicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="40dp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_completion_time"
+        app:layout_constraintStart_toEndOf="@+id/dayPicker"/>
+
+    <TextView
+        android:id="@+id/colonTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=":"
+        android:textStyle="bold"
+        android:textSize="12sp"
+        android:layout_marginStart="10dp"
+        app:layout_constraintBottom_toBottomOf="@id/hourPicker"
+        app:layout_constraintTop_toTopOf="@id/hourPicker"
+        app:layout_constraintStart_toEndOf="@id/hourPicker"
+        app:layout_constraintEnd_toStartOf="@id/minutePicker"/>
+
+    <NumberPicker
+        android:id="@+id/minutePicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_completion_time"
+        app:layout_constraintStart_toEndOf="@id/colonTextView"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

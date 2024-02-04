@@ -2,6 +2,7 @@ package com.example.myuiroom
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.Intent
 import android.media.RingtoneManager
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -9,6 +10,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.annotation.RequiresApi
 import com.example.myuiroom.databinding.ActivityMainBinding
+import com.example.myuiroom.servic.FileCleanupService
 import com.example.myuiroom.tabs.Login
 import com.example.myuiroom.tabs.TaskAll
 import com.example.myuiroom.tabs.TaskForType
@@ -20,8 +22,30 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding?.root)
-        supportFragmentManager.beginTransaction().replace(R.id.content, Login()).commit()
-        binding?.bottomNav?.selectedItemId = R.id.loginBottomNav
+
+        // запускаю службу отчистки не используемых файлов
+        val intent = Intent(this, FileCleanupService::class.java)
+        startService(intent)
+
+        if (intent.hasExtra("OpenFragment")) {
+            val fragmentToOpen = intent.getStringExtra("OpenFragment")
+            val idTask = intent.getStringExtra("idTask")
+            if (fragmentToOpen == "TaskForType") {
+                openTaskForType(idTask.toString())
+            }
+            else
+            {
+                supportFragmentManager.beginTransaction().replace(R.id.content, Login()).commit()
+                binding?.bottomNav?.selectedItemId = R.id.loginBottomNav
+            }
+
+            } else {
+            supportFragmentManager.beginTransaction().replace(R.id.content, Login()).commit()
+            binding?.bottomNav?.selectedItemId = R.id.loginBottomNav
+             }
+
+
+
 
         binding?.bottomNav?.setOnItemSelectedListener { item ->
 
@@ -54,5 +78,18 @@ class MainActivity : AppCompatActivity() {
         notificationManager.createNotificationChannel(channel)
         Log.d("MyLog", "Main activity  notificationManager $notificationManager")
 
+    }
+
+    // open fragment TaskForType if Value filled OpenFragment
+    private fun openTaskForType(idTask: String) {
+        val fragment = TaskForType().apply {
+            arguments = Bundle().apply {
+                putString("idTask", idTask)
+            }
+        }
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.content, fragment)
+            .commit()
+        binding?.bottomNav?.selectedItemId = R.id.taskItemBottomNav
     }
 }

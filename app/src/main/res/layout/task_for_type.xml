@@ -7,13 +7,79 @@
     android:layout_height="match_parent"
     tools:context=".tabs.TaskForType">
 
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="@color/green_medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/ib_family"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/ib_job"
+            android:background="@drawable/selector_family_button"
+            android:layout_marginTop="10dp"
+            />
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/ib_job"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ib_family"
+            app:layout_constraintEnd_toStartOf="@+id/ib_health"
+            android:background="@drawable/selector_job_button"
+            android:layout_marginTop="10dp"
+            />
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/ib_health"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ib_job"
+            app:layout_constraintEnd_toStartOf="@+id/ib_study"
+            android:background="@drawable/selector_medical_button"
+            android:layout_marginTop="10dp"
+            />
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/ib_study"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ib_health"
+            app:layout_constraintEnd_toStartOf="@+id/ib_everything"
+            android:background="@drawable/selector_table_button"
+            android:layout_marginTop="10dp"
+            />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/ib_everything"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ib_study"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:background="@drawable/selector_testing_button"
+            android:layout_marginTop="10dp"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <GridLayout
         android:id="@+id/gridLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:rowCount="2"
         android:columnCount="2"
-        android:useDefaultMargins="false">
+        android:useDefaultMargins="false"
+        android:layout_marginTop="50dp">
 
         <!-- FrameLayout for Important -->
         <FrameLayout
@@ -34,13 +100,26 @@
 
 
             </androidx.recyclerview.widget.RecyclerView>
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/im_important"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="5dp"
+                android:background="@drawable/urgent_blue" />
+
             <TextView
                 android:id="@+id/tv_important"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="top|center_horizontal"
-                android:text="Important"
-                android:textColor="@color/light_blue"/>
+                android:text="@string/important"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_gravity="top|end"
+                android:textColor="@color/light_blue"
+                android:textStyle="bold"/>
+
+
         </FrameLayout>
 
         <!-- FrameLayout for Important and Urgent -->
@@ -56,13 +135,24 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/frame_red"
                 android:paddingTop="30dp"/>
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/im_important_and_urgent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="5dp"
+                android:background="@drawable/urgent_and_important_3" />
+
             <TextView
                 android:id="@+id/tv_important_and_urgent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Important and Urgent"
-                android:layout_gravity="top|center_horizontal"
-                android:textColor="@color/red"/>
+                android:text="@string/imp_and_urgent"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_gravity="top|end"
+                android:textColor="@color/red"
+                android:textStyle="bold"/>
         </FrameLayout>
 
         <!-- FrameLayout for Not Important and Urgent -->
@@ -78,13 +168,24 @@
                 android:background="@drawable/frame_green"
                 android:paddingTop="30dp"
                 />
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/image_not_important_and_urgent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="5dp"
+                android:background="@drawable/relax_urg"/>
+
             <TextView
                 android:id="@+id/tv_not_important_and_urgent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Not Important and Urgent"
-                android:layout_gravity="top|center_horizontal"
-                android:textColor="@color/green_medium"/>
+                android:text="@string/not_imp_and_urgen"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_gravity="top|end"
+                android:textColor="@color/green_dark"
+                android:textStyle="bold"/>
         </FrameLayout>
 
         <!-- FrameLayout for Urgent -->
@@ -99,13 +200,24 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/frame_gold"
                 android:paddingTop="30dp"/>
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/image_urgent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="5dp"
+                android:background="@drawable/urgent_urg"/>
+
             <TextView
                 android:id="@+id/tv_urgent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Urgent"
-                android:layout_gravity="top|center_horizontal"
-                android:textColor="@color/gold"/>
+                android:layout_gravity="top|end"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:text="@string/urgent"
+                android:textColor="@color/gold"
+                android:textStyle="bold" />
         </FrameLayout>
 
     </GridLayout>
@@ -126,6 +238,19 @@
         app:layout_constraintWidth_default="percent"
         app:layout_constraintWidth_percent="0.1"
         android:text="@string/add_task_plus" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/la_anim_done"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        app:lottie_rawRes="@raw/done_2"
+        app:layout_constraintBottom_toBottomOf="@id/gridLayout"
+        app:layout_constraintEnd_toEndOf="@id/gridLayout"
+        app:layout_constraintStart_toStartOf="@id/gridLayout"
+        app:layout_constraintTop_toTopOf="@id/gridLayout"
+        android:visibility="gone"/>
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

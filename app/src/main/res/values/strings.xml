@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MyUIRoom</string>
+    <string name="app_name">Uix</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="home">HOME</string>
     <string name="settings">SETTINGS</string>
@@ -18,9 +18,9 @@
     <string name="important">IMPORTANT</string>
     <string name="urgent">URGENT</string>
     <string name="alllist">ALL LIST</string>
-    <string name="imp_and_urgent">IMPORTANT AND URGENT</string>
+    <string name="imp_and_urgent">IMP AND URGENT</string>
     <string name="app_for_task">AN APP TO KEEP TRACK OF YOUR CASES AND TASKS</string>
-    <string name="not_imp_and_urgen">NOT IMPORTANT AND NOT URGENT</string>
+    <string name="not_imp_and_urgen">NOT IMP NOT URGENT</string>
     <string name="task_edit">EDIT TASK</string>
     <string name="label_enter_name_task">ENTER A TASK NAME</string>
     <string name="name_task">TASK NAME:</string>
@@ -37,7 +37,34 @@
     <string name="close_task">IT IS TIME TO CLOSE THE TASK</string>
     <string name="notication_dun">NOTIFICATION DUN</string>
     <string name="uix">UIX</string>
+    <string name="completion_day">COMPLETION DAY</string>
     <string name="completion_time">COMPLETION TIME</string>
     <string name="show_notifications">SHOW ALERT</string>
     <string name="in_progres">IN PROGRES</string>
+    <string name="notification_output_time">NOTIFICATION OUTPUT TIME</string>
+    <string name="task_editing">Editing a task</string>
+    <string name="enable_notifications">Enable Notifications</string>
+    <string name="please_enable_settings">Notifications are disabled. Please enable them in settings.</string>
+    <string name="cancel">Cancel</string>
+    <string name="okkay">Okay</string>
+    <string name="notifications_will_send">A notification will be sent</string>
+    <string name="transfer_days">Transfer to 1 day</string>
+    <string name="you_selected_categoru">You have selected a category</string>
+    <string name="health">Health</string>
+    <string name="family">Family</string>
+    <string name="job">Job</string>
+    <string name="study">Education</string>
+    <string name="everything">Everything</string>
+    <string name="add">Add</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="delete">Delete</string>
+    <string name="task_deletion">Deleting a task</string>
+    <string name="file_deletion">Deleting files</string>
+    <string name="question_delete">Are you sure you want to delete all the files in the task?</string>
+    <string name="question_delete_task">Are you sure you want to delete this task?</string>
+    <string name="unnamed_task">Unnamed task</string>
+    <string name="one">1.</string>
+    <string name="more_properties">MORE PROPERTIES</string>
+    <string name="notification_will_be_shown_at">A reminder to close the task will be displayed: </string>
 </resources>

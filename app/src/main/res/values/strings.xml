@@ -60,6 +60,7 @@
     <string name="no">No</string>
     <string name="delete">Delete</string>
     <string name="task_deletion">Deleting a task</string>
+    <string name="delete_completed_task">Delete a completed task</string>
     <string name="file_deletion">Deleting files</string>
     <string name="question_delete">Are you sure you want to delete all the files in the task?</string>
     <string name="question_delete_task">Are you sure you want to delete this task?</string>

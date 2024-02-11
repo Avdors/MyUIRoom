@@ -23,6 +23,8 @@ interface TaskDao {
     suspend fun deleteTask(taskModel: TaskModel)
     @Query("DELETE FROM task_data_table")
     suspend fun deleteAllTask()
+    @Query("DELETE FROM task_data_table WHERE task_completed == :completed")
+    suspend fun deleteAllTaskCompleted(completed:String)
     @Query("SELECT * FROM task_data_table WHERE task_id = :taskId")
     fun getTaskById(taskId: Int): LiveData<TaskModel>
     @Query("DELETE FROM task_data_table WHERE task_id = :taskId")

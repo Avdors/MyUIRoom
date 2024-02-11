@@ -15,6 +15,10 @@ class TaskRepository(private val taskDao: TaskDao) {
         return taskDao.getFilter(type, completed)
     }
 
+    suspend fun deleteAllTaskCompleted(completed: String) {
+        taskDao.deleteAllTaskCompleted(completed)
+    }
+
     suspend fun insertTask(taskModel: TaskModel): Long{
         return taskDao.insertTask(taskModel)
     }

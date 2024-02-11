@@ -3,6 +3,7 @@ package com.example.myuiroom.tabs
 import android.app.AlertDialog
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -50,6 +51,7 @@ class TaskAll : Fragment(), View.OnClickListener, Listener {
         loadTask()
         binding?.buttonAddTask?.setOnClickListener(this)
        // binding?.animation?.setAnimation("test1.json")
+        binding?.buttonDellTask?.setOnClickListener(this)
 
         return binding?.root
     }
@@ -90,6 +92,15 @@ class TaskAll : Fragment(), View.OnClickListener, Listener {
         parameters.putString("taskAction", "Edit")
         panelEditTask.arguments = parameters
 
+        Log.d("LogTall", "idTask ${taskModel.id.toString()}")
+        Log.d("LogTall", "nameTask ${taskModel.name.toString()}")
+        Log.d("LogTall", "email ${taskModel.email.toString()}")
+        Log.d("LogTall", "typeTask ${taskModel.type.toString()}")
+        Log.d("LogTall", "infoTask ${taskModel.info.toString()}")
+        Log.d("LogTall", "dateStart ${taskModel.dateStart.toString()}")
+        Log.d("LogTall", "dateEnd ${taskModel.dateEnd.toString()}")
+        Log.d("LogTall", "completed ${taskModel.completed.toString()}")
+        Log.d("LogTall", "category ${taskModel.category.toString()}")
         panelEditTask.show((context as FragmentActivity).supportFragmentManager, "editTask")
     }
 
@@ -142,6 +153,9 @@ class TaskAll : Fragment(), View.OnClickListener, Listener {
                 parameters.putString("category", "everything")
                 panelEditTask.arguments = parameters
                 panelEditTask.show((context as FragmentActivity).supportFragmentManager, "addTask")
+            }
+            R.id.buttonDellTask -> {
+            taskViewModel?.deleteAllTaskCompleted()
             }
 
         }

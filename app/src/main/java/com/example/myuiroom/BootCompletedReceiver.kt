@@ -50,11 +50,18 @@ class BootCompletedReceiver : BroadcastReceiver()  {
         // This process should ideally be asynchronous (e.g., using coroutines)
         CoroutineScope(Dispatchers.IO).launch {
             val tasks = getTasksFromDatabase(context) // Implement this method to fetch tasks
-            Log.d("MyLog", "BootCompletedReceiver tasks: $tasks")
+
             tasks?.forEach { task ->
                 if (task.show_alert == "true") {
-                    Log.d("MyLog", "BootCompletedReceiver task.show_alert: ${task.show_alert}")
-                    scheduleNotification?.createNotification(context, task, )
+
+                    var dayTask = task.day.toString().toIntOrNull() ?: 0
+                    val hourTask = task.hourOfDay.toString().toIntOrNull() ?: 12
+                    val minuteTask = task.minute.toString().toIntOrNull() ?: 0
+                    val time = getTime(task.dateStart.toString(),dayTask, hourTask, minuteTask)
+                    val currentTime = System.currentTimeMillis()
+                    if(time > currentTime) {
+                        scheduleNotification?.createNotification(context, task,)
+                    }else{Log.d("LogReciev", "дата уведомления старая $time")}
                 }
             }
         }
@@ -68,39 +75,6 @@ class BootCompletedReceiver : BroadcastReceiver()  {
         return taskRepository?.getTaskAll() ?: emptyList()
     }
 
-//    private fun scheduleNotification(context: Context, task: TaskModel) {
-//
-//        val dayTask = task.day.toString().toIntOrNull() ?: 0
-//        val hourTask = task.hourOfDay.toString().toIntOrNull() ?: 12
-//        val minuteTask = task.minute.toString().toIntOrNull() ?: 0
-//
-//        Log.d("MyLog", "greateNotif: ")
-//        val intent = Intent(context, Notification::class.java)
-//        intent.setAction("com.example.myuiroom.MY_ACTION")
-//        val title = context.getString(R.string.close_task)
-//        val message = task.name.toString()
-//        intent.putExtra(titleExtra, title)
-//        intent.putExtra(messageExtra, message)
-//        intent. putExtra("idTask", task.id.toString())
-//        Log.d("MyLog", "greateNotif: IdTask ${task.id.toString()}")
-//
-//        val pendingIntent = PendingIntent.getBroadcast(
-//            context,
-//            notificationID,
-//            intent,
-//            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-//        )
-//        val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-//        val time = getTime(task.dateStart, dayTask, hourTask, minuteTask)
-//
-//        alarmManager.setExactAndAllowWhileIdle(
-//            AlarmManager.RTC_WAKEUP,
-//            time,
-//            pendingIntent
-//        )
-//
-//    }
-
     private fun getTime(startDateText : String, dayTask: Int, hourTask: Int, minuteTask : Int): Long {
 
         val calendar = Calendar.getInstance()
@@ -109,7 +83,7 @@ class BootCompletedReceiver : BroadcastReceiver()  {
             val parsedDate = LocalDate.parse(startDateText, dateFormatter)
             calendar.set(parsedDate.year, parsedDate.monthValue - 1, parsedDate.dayOfMonth)
         } catch (e: DateTimeParseException) {
-            Log.e("PanelEditTask", "Error parsing start date: $startDateText", e)
+
             // Handle the error, perhaps by using the current date or notifying the user
         }
         calendar.add(Calendar.DAY_OF_MONTH, dayTask ?: 0)

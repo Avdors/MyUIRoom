@@ -21,6 +21,12 @@ class TaskViewModel(private val taskRepository: TaskRepository): ViewModel() {
         return taskRepository.getFilter(type, completed)
     }
 
+    fun deleteAllTaskCompleted() {
+        viewModelScope.launch {
+            taskRepository.deleteAllTaskCompleted("true")
+        }
+    }
+
     fun startInsert(
         nameTask: String, email: String, typeTask: String, infoTask: String,
         dateStart: String, dateEnd: String, completed: String,

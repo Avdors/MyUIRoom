@@ -26,13 +26,15 @@ const val nameChannel = "Notif Channel"
 class Notification : BroadcastReceiver() {
 
 private var taskRepository: TaskRepository? = null
+    private var notificationIdTest: Int? = null
     lateinit var scheduleNotification: ScheduleNotification
 companion object {
-    const val ACTION_RESCHEDULE = "com.example.myapp.ACTION_RESCHEDULE"
-    const val ACTION_COMPLETE = "com.example.myapp.ACTION_COMPLETE"
+    const val ACTION_RESCHEDULE = "com.example.myuiroom.ACTION_RESCHEDULE"
+    const val ACTION_COMPLETE = "com.example.myuiroom.ACTION_COMPLETE"
 }
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onReceive(context: Context, intent: Intent) {
+        Log.d("NotificationDebug", "Action received: ${intent.action}, Task ID: ${intent.getStringExtra("idTask")}")
         scheduleNotification = ScheduleNotification()
         when (intent.action) {
             ACTION_RESCHEDULE -> handleReschedule(context, intent)
@@ -43,8 +45,8 @@ companion object {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun handleReschedule(context: Context, intent: Intent) {
         // Extract task ID from intent and reschedule the task
-        Log.d("MyLog", "handleReschedule")
         val taskId = intent.getStringExtra("idTask")?.toIntOrNull()
+        Log.d("NotificationDebug", "Handling Reschedule for Task ID: $taskId")
         taskId?.let {
             CoroutineScope(Dispatchers.IO).launch {
                 val task = getTaskFromDatabase(context, taskId)
@@ -52,18 +54,20 @@ companion object {
                     // Update taskModel as required for rescheduling
                    // taskModel.day += 1 // For example, incrementing the day by 1
                     val change = taskModel.minute + 2
+
                     taskModel.minute = change
-                    scheduleNotification.createNotification(context, taskModel, change)
                     updateTaskInDatabase(context, taskModel)
+                    scheduleNotification.createNotification(context, taskModel, change)
+
                     val notificationId = taskModel.id.hashCode()
-                    cancelNotification(context, notificationId)
+                    cancelNotification(context,  notificationId)
                 }
             }
                     }
     }
 
     private suspend fun getTaskFromDatabase(context: Context, taskId: Int): TaskModel? {
-        Log.d("MyLog", "getTaskFromDatabase taskId $taskId")
+
         val taskDao = Database.getInstance(context).taskDao
         taskRepository = TaskRepository(taskDao)
         return taskRepository?.getTaskByIdDirect(taskId)
@@ -73,8 +77,9 @@ companion object {
 
     private fun handleComplete(context: Context, intent: Intent) {
         // Extract task ID from intent and reschedule the task
-        Log.d("MyLog", "handleComplete")
+
         val taskId = intent.getStringExtra("idTask")?.toIntOrNull()
+        Log.d("NotificationDebug", "Handling Complete for Task ID: $taskId")
         taskId?.let {
             CoroutineScope(Dispatchers.IO).launch {
                 val task = getTaskFromDatabase(context, taskId)
@@ -89,10 +94,10 @@ companion object {
     }
 
     private fun updateTaskInDatabase(context: Context, taskModel: TaskModel) {
-        Log.d("MyLog", "updateTaskInDatabase start")
+        Log.d("LogNot", "Notification.kt updateTaskInDatabase start")
         val taskDao = Database.getInstance(context).taskDao
         val taskRepository = TaskRepository(taskDao)
-        Log.d("MyLog", "handleComplete updateTaskInDatabase taskModel $taskModel")
+        Log.d("LogNot", "Notification.kt updateTaskInDatabase taskModel minute ${taskModel.minute}")
         CoroutineScope(Dispatchers.IO).launch {
             taskRepository.updateTask(taskModel)
         }
@@ -100,6 +105,9 @@ companion object {
 
     private fun showNotification(context: Context, intent: Intent) {
         val idTask = intent.getStringExtra("idTask")
+        val notificationId = idTask?.hashCode() ?: 0
+        notificationIdTest = idTask?.hashCode() ?: 0
+        Log.d("NotificationDebug", "Showing notification with ID: $notificationId for Task ID: $idTask")
         val requestCodeReschedule = idTask.hashCode() // or some unique way to derive from taskId
         val requestCodeComplete = (idTask.hashCode() + 1)
         // Create the intent for opening the app (existing implementation)
@@ -135,44 +143,16 @@ companion object {
             putExtra("idTask", idTask)
         }
         val completePendingIntent = PendingIntent.getBroadcast(context, requestCodeComplete, completeIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-        notificationBuilder.addAction(0, "Finish", completePendingIntent)
+        notificationBuilder.addAction(0, "Done", completePendingIntent)
         // Build and show the notification
         val notification = notificationBuilder.build()
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         manager.notify(requestCodeReschedule, notification)
     }
-    private fun cancelNotification(context: Context, notificationId: Int) {
+    private fun cancelNotification(context: Context, taskId: Int) {
+        val notificationId = taskId.hashCode()
+        Log.d("NotificationDebug", "Canceling notification with ID: $notificationId for Task ID: $taskId")
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.cancel(notificationId)
+        notificationManager.cancel(notificationIdTest!!)
     }
 }
-//    override fun onReceive(context: Context, intent: Intent) {
-//        Log.d("MyLog", "Notification: onReceive ")
-//        val idTask = intent.getStringExtra("idTask")
-//        val openFragmentIntent = Intent(context, MainActivity::class.java).apply {
-//            putExtra("OpenFragment", "TaskForType")
-//            if (idTask != null){
-//                putExtra("idTask", idTask)
-//            }
-//
-//
-//        }// Add extra data
-//        val pendingIntent = PendingIntent.getActivity(
-//            context,
-//            0,
-//            openFragmentIntent,
-//            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-//        )
-//        val notification = NotificationCompat.Builder(context, channelID)
-//            .setSmallIcon(R.drawable.ic_launcher_foreground)
-//            .setContentTitle(intent.getStringExtra(titleExtra))
-//            .setContentText(intent.getStringExtra(messageExtra))
-//            .setPriority(NotificationCompat.PRIORITY_HIGH)
-//            .setContentIntent(pendingIntent)
-//            .setAutoCancel(true)
-//            .build()
-//
-//        val  manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//        manager.notify(notificationID, notification)
-//    }
-//}

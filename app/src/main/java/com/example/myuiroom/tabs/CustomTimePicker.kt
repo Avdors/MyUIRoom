@@ -3,6 +3,7 @@ package com.example.myuiroom.tabs
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -39,6 +40,9 @@ class CustomTimePicker : DialogFragment() {
         val builder = AlertDialog.Builder(activity)
         val inflater = requireActivity().layoutInflater
         val view = inflater.inflate(R.layout.fragment_custom_time_picker, null)
+
+        val dayValue = arguments?.getInt("dayValue", 0) ?: 0
+        Log.d("LogC", "dayValue $dayValue")
         val hourPicker = view.findViewById<NumberPicker>(R.id.hourPicker).apply {
             minValue = 0
             maxValue = 23
@@ -50,6 +54,7 @@ class CustomTimePicker : DialogFragment() {
         val dayPicker = view.findViewById<NumberPicker>(R.id.dayPicker).apply {
             minValue = 0
             maxValue = 99
+            value = dayValue
         }
 
         builder.setView(view)

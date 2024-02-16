@@ -26,25 +26,8 @@ class MainActivity : AppCompatActivity() {
         // запускаю службу отчистки не используемых файлов
         val intent = Intent(this, FileCleanupService::class.java)
         startService(intent)
-
-        if (intent.hasExtra("OpenFragment")) {
-            val fragmentToOpen = intent.getStringExtra("OpenFragment")
-            val idTask = intent.getStringExtra("idTask")
-            if (fragmentToOpen == "TaskForType") {
-                openTaskForType(idTask.toString())
-            }
-            else
-            {
-                supportFragmentManager.beginTransaction().replace(R.id.content, Login()).commit()
-                binding?.bottomNav?.selectedItemId = R.id.loginBottomNav
-            }
-
-            } else {
-            supportFragmentManager.beginTransaction().replace(R.id.content, Login()).commit()
-            binding?.bottomNav?.selectedItemId = R.id.loginBottomNav
-             }
-
-
+        //getIntent - получаем намерение с которого началась активность
+        handleIntent(getIntent())
 
 
         binding?.bottomNav?.setOnItemSelectedListener { item ->
@@ -61,6 +44,28 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+    private fun handleIntent(intent: Intent) {
+        if (intent.hasExtra("OpenFragment")) {
+            intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            val fragmentToOpen = intent.getStringExtra("OpenFragment")
+            val idTask = intent.getStringExtra("idTask")
+            if (fragmentToOpen == "TaskForType") {
+                openTaskForType(idTask.toString())
+            }
+            else
+            {
+                supportFragmentManager.beginTransaction().replace(R.id.content, Login()).commit()
+                binding?.bottomNav?.selectedItemId = R.id.loginBottomNav
+            }
+
+        } else {
+            supportFragmentManager.beginTransaction().replace(R.id.content, Login()).commit()
+            binding?.bottomNav?.selectedItemId = R.id.loginBottomNav
+        }
+    }
+
+
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotification() {
         //val name = "Notif Channel"
@@ -76,7 +81,7 @@ class MainActivity : AppCompatActivity() {
 
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
-        Log.d("MyLog", "Main activity  notificationManager $notificationManager")
+
 
     }
 

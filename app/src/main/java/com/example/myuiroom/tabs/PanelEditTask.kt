@@ -55,8 +55,6 @@ import java.time.format.DateTimeParseException
 import java.time.temporal.ChronoField
 import java.util.*
 
-
-
     @RequiresApi(Build.VERSION_CODES.O)
     class PanelEditTask : BottomSheetDialogFragment(), View.OnClickListener, CustomTimePicker.TimePickerListener{
     private var binding: PanelEditTaskBinding? = null
@@ -364,14 +362,31 @@ import java.util.*
 
         private fun setupListeners() {
 
-            morePropertiesView?.findViewById<EditText>(R.id.numberPickerDays)?.setOnClickListener {
-                val dayPickerFragment = CustomTimePicker()
-                dayPickerFragment.setTimePickerListener(this)
-                dayPickerFragment.show(parentFragmentManager, "timePicker")
+            morePropertiesView?.findViewById<EditText>(R.id.numberPickerDays)?.let { editText ->
+                // Log the current text value for debugging
+                val currentText = editText.text.toString()
+                Log.d("LogC", "Initial EditText Value: $currentText")
+
+                editText.setOnClickListener {
+                    // Here, directly use 'editText' reference to get the current value
+                    val currentDayValueStr = editText.text.toString()
+                    Log.d("LogC", "Clicked EditText Value: $currentDayValueStr")
+                    val currentDayValue = currentDayValueStr.toIntOrNull() ?: 0 // Default to 0 if null or not a number
+                    Log.d("LogC", "Parsed CurrentDayValue: $currentDayValue")
+
+                    // Now, create the fragment and pass the currentDayValue
+                    val dayPickerFragment = CustomTimePicker().apply {
+                        arguments = Bundle().apply {
+                            putInt("dayValue", currentDayValue)
+                        }
+                    }
+                    dayPickerFragment.setTimePickerListener(this)
+                    dayPickerFragment.show(parentFragmentManager, "timePicker")
+                }
             }
-            Log.d("PanelEditTask", "currentDate: $currentDate")
+
             morePropertiesView?.findViewById<CheckBox>(R.id.checkBoxCompleted)?.setOnCheckedChangeListener { _, isChecked ->
-                //morePropertiesView?.findViewById<AppCompatTextView>(R.id.DateEndTask)?.text =
+
                     if (isChecked){
                         morePropertiesView?.findViewById<AppCompatTextView>(R.id.DateEndTask)?.text =  currentDate.toString()
                         complet = "true"
@@ -452,9 +467,6 @@ import java.util.*
         }
 
         private fun handleButtonClick(buttonId: Int) {
-
-
-
             when (buttonId) {
                 R.id.ib_family -> category = "family"
                 R.id.ib_job -> category = "job"
@@ -463,20 +475,15 @@ import java.util.*
                 R.id.ib_everything -> category = "everything"
                 // Add other cases as needed
             }
-
             // Show toast for category selection
             showCustomToast(requireContext(), getString(R.string.you_selected_categoru) + " " + category)
-
             // Create or update the task based on whether it exists
             if (idTask == null) {
                 createTask() // Ensure this method now correctly sets idTask
             } else {
                 updateTask() // This should now only update the existing task, including setting its category
             }
-
-
         }
-
         //speech
         private val result = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -487,7 +494,6 @@ import java.util.*
                 editText.setSelection(editText.text.length)
             }
         }
-
         private fun checkBatteryOptimizations(context: Context) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
@@ -583,37 +589,6 @@ import java.util.*
             datePickerDialog.show()
         }
     }
-
-
-//    fun spinerProcessing(){
-//        val taskTypeSpinner = binding?.taskTypeSpinner
-//        val taskTypes = resources.getStringArray(R.array.type)
-//        val adapter = ArrayAdapter(context as FragmentActivity, android.R.layout.simple_spinner_item, taskTypes)
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-//        taskTypeSpinner?.adapter = adapter
-//
-//        if (firstStart && typeTask != null){
-//            val position = adapter.getPosition(typeTask)
-//            taskTypeSpinner?.setSelection(position)
-//          //  firstStart = false
-//        }
-//
-//        taskTypeSpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-//            override fun onItemSelected(
-//                parent: AdapterView<*>?,
-//                view: View?,
-//                position: Int,
-//                id: Long
-//            ) {
-//                typeTask = parent?.getItemAtPosition(position).toString()
-//            }
-//
-//            override fun onNothingSelected(parent: AdapterView<*>?) {
-//                TODO("Not yet implemented")
-//            }
-//        }
-//    }
-
         fun spinerProcessingMorePropert(){
 
             val taskTypeSpinner: Spinner? = morePropertiesView?.findViewById(R.id.taskTypeSpinner)
@@ -627,7 +602,6 @@ import java.util.*
                 taskTypeSpinner?.setSelection(position)
                 firstStart = false
             }
-
             taskTypeSpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
                 override fun onItemSelected(
                     parent: AdapterView<*>?,
@@ -650,12 +624,6 @@ import java.util.*
         if (morePropertiesView == null) {
             toggleNumberDaysVisibility()
         }
-//       if (
-//
-//           binding?.DateStartTask?.text?.toString()!!.isNotEmpty() and
-//           binding?.DateEndTask?.text?.toString()!!.isNotEmpty()
-//       )
-
            if (
                dateStartTaskTextView?.text?.toString()!!.isNotEmpty() and
                dateEndTaskTextView?.text?.toString()!!.isNotEmpty()
@@ -685,25 +653,18 @@ import java.util.*
                (context as FragmentActivity).supportFragmentManager.beginTransaction()
                    .replace(R.id.content, TaskForType()).commit()
            } else if (nameFormParent == "TaskForType" && taskAction != "Edit") {
-
-
                createTask()
                //grateNotification()
                dismiss()
 
                (context as FragmentActivity).supportFragmentManager.beginTransaction()
                    .replace(R.id.content, TaskForType()).commit()
-
-
            }
-
-
        } else
            Toast.makeText(context, getString(R.string.error), Toast.LENGTH_SHORT).show()
    }
         R.id.ib_close ->{
             dismiss()
-
         }
         R.id.ib_file ->{
             if(idTask != null) {
@@ -721,9 +682,6 @@ import java.util.*
             if (idTask != null && nameFormParent == "TaskForType") {
 
                 showConfirmationDialog(getString(R.string.file_deletion), getString(R.string.question_delete))
-
-
-
             }else{
                 dismiss()
                 if (nameFormParent == "TaskForType") {
@@ -735,14 +693,10 @@ import java.util.*
                 }
             }
         }
-
     }
-
     }
-
 
         private fun createTask(){
-
             //проверка на случай незаполнения обязательных полей
             if(binding?.editNameTask?.text?.isEmpty() == true){
                 binding?.editNameTask?.setText(getString(R.string.unnamed_task))
@@ -750,18 +704,14 @@ import java.util.*
             if(binding?.editInfoTask?.text?.isEmpty() == true){
                 binding?.editInfoTask?.setText(getString(R.string.one))
             }
-
             // прописываю тип по умолчанию если он не заполнен
             if(typeTask != "null"){
                 typeTask = "important"
-
             }
             // инициализирую заполнение скрытых полей more_properties
             if (morePropertiesView == null) {
                 toggleNumberDaysVisibility()
             }
-
-
             taskViewModel?.startInsert(
                 binding?.editNameTask?.text?.toString()!!,
                 email.toString(),
@@ -835,8 +785,6 @@ import java.util.*
                     .replace(R.id.content, TaskAll()).commit()
             }
         }
-
-
     // Проверяю есть ли разрешение на уведомления
         @RequiresApi(Build.VERSION_CODES.Q)
         private fun areNotificationsEnabled(context: Context): Boolean {
@@ -880,7 +828,6 @@ import java.util.*
             }
         }
     }
-
     private fun showAlert(time: Long, title: String, message: String) {
         val date = Date(time)
         val dateFormat = android.text.format.DateFormat.getLongDateFormat(requireContext())
@@ -896,7 +843,6 @@ import java.util.*
             .setPositiveButton(getString(R.string.okkay)){_,_ ->}
             .show()
     }
-
         private fun showConfirmationDialog(title: String, message: String) {
             // инициализирую заполнение скрытых полей more_properties
             if (morePropertiesView == null) {
@@ -962,16 +908,11 @@ import java.util.*
             // Handle the error, perhaps by using the current date or notifying the user
         }
         calendar.add(Calendar.DAY_OF_MONTH, dayTask ?: 0)
-
-
         calendar.set(Calendar.HOUR_OF_DAY, hourTask ?: 12)
         calendar.set(Calendar.MINUTE, minuteTask ?: 0)
         calendar.set(Calendar.SECOND, 0)
         calendar.set(Calendar.MILLISECOND, 0)
-
-
         return calendar.timeInMillis
-
     }
 
         override fun onTimeSet(day: Int, hourOfDay: Int, minute: Int) {
@@ -982,6 +923,4 @@ import java.util.*
             hourTask = hourOfDay
             minuteTask = minute
         }
-
-
     }

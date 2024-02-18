@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Uix</string>
+    <string name="app_name">UI</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="home">HOME</string>
     <string name="settings">SETTINGS</string>
@@ -36,7 +36,7 @@
     <string name="greate_a_notification">GREATE A NOTIFICATION</string>
     <string name="close_task">IT IS TIME TO CLOSE THE TASK</string>
     <string name="notication_dun">NOTIFICATION DUN</string>
-    <string name="uix">UIX</string>
+    <string name="uix">UI</string>
     <string name="completion_day">COMPLETION DAY</string>
     <string name="completion_time">COMPLETION TIME</string>
     <string name="show_notifications">SHOW ALERT</string>
@@ -57,6 +57,7 @@
     <string name="everything">Everything</string>
     <string name="add">Add</string>
     <string name="yes">Yes</string>
+    <string name="done">Done</string>
     <string name="no">No</string>
     <string name="delete">Delete</string>
     <string name="task_deletion">Deleting a task</string>

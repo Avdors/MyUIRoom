@@ -34,8 +34,8 @@ class ScheduleNotification {
         var minuteTask = task.minute.toString().toIntOrNull() ?: 0
         if(change > 0){
             // временно меняю на минуты для теста
-            //dayTask = change
-            minuteTask = change
+            dayTask = change
+
 
         }
 
@@ -48,7 +48,7 @@ class ScheduleNotification {
         intent. putExtra("idTask", task.id.toString())
 
         val notificationId = task.id.hashCode()
-        Log.d("MyLog", "notificationId $notificationId")
+
         val pendingIntent = PendingIntent.getBroadcast(
             context,
             notificationId,
@@ -56,7 +56,7 @@ class ScheduleNotification {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
         val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        Log.d("MyLog", "minuteTask $minuteTask")
+
         val time = getTime(task.dateStart, dayTask, hourTask, minuteTask)
 
 
@@ -80,7 +80,7 @@ class ScheduleNotification {
         intent. putExtra("idTask", taskId.toString())
 
         val notificationId = taskId.hashCode()
-        Log.d("MyLog", "notificationId with time $notificationId")
+
         val pendingIntent = PendingIntent.getBroadcast(
             context,
             notificationId,

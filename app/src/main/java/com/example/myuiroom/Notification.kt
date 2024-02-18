@@ -53,7 +53,7 @@ companion object {
                 task?.let { taskModel ->
                     // Update taskModel as required for rescheduling
                     taskModel.day += 1 // For example, incrementing the day by 1
-                    val change = taskModel.minute + 2
+                    val change = taskModel.day
 
                     taskModel.minute = change
                     updateTaskInDatabase(context, taskModel)
@@ -147,8 +147,9 @@ companion object {
             action = ACTION_COMPLETE
             putExtra("idTask", idTask)
         }
+        val textDone = context.getString(R.string.done)
         val completePendingIntent = PendingIntent.getBroadcast(context, requestCodeComplete, completeIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-        notificationBuilder.addAction(0, "Done", completePendingIntent)
+        notificationBuilder.addAction(0, textDone, completePendingIntent)
         // Build and show the notification
         val notification = notificationBuilder.build()
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

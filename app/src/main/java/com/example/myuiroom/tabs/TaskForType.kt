@@ -163,6 +163,13 @@ class TaskForType : Fragment(), View.OnClickListener, Listener, PanelEditTaskDis
         return binding?.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onResume() {
+        super.onResume()
+        loadTask()
+        Log.d("MyLog", "onResume")
+    }
+
     private fun recordCheck(){
 
         taskViewModel!!.getTaskCount()

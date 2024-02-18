@@ -81,7 +81,7 @@ class TaskForType : Fragment(), View.OnClickListener, Listener, PanelEditTaskDis
         binding?.tvNotImportantAndUrgent?.visibility = View.VISIBLE
         binding?.tvUrgent?.visibility = View.VISIBLE
         binding?.tvImportantAndUrgent?.visibility = View.VISIBLE
-        binding?.laAnimDone?.setSpeed(2f)
+        binding?.laAnimDone?.setSpeed(1f)
         binding?.laAnimDone?.addAnimatorListener(object : Animator.AnimatorListener {
             override fun onAnimationStart(animation: Animator) {
 

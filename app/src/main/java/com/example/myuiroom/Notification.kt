@@ -52,15 +52,17 @@ companion object {
                 val task = getTaskFromDatabase(context, taskId)
                 task?.let { taskModel ->
                     // Update taskModel as required for rescheduling
-                   // taskModel.day += 1 // For example, incrementing the day by 1
+                    taskModel.day += 1 // For example, incrementing the day by 1
                     val change = taskModel.minute + 2
 
                     taskModel.minute = change
                     updateTaskInDatabase(context, taskModel)
-                    scheduleNotification.createNotification(context, taskModel, change)
+                    //scheduleNotification.createNotification(context, taskModel, change)
 
                     val notificationId = taskModel.id.hashCode()
+                    showNotification(context, intent)
                     cancelNotification(context,  notificationId)
+                    scheduleNotification.createNotification(context, taskModel, change)
                 }
             }
                     }
@@ -87,7 +89,9 @@ companion object {
                     taskModel.completed = "true" // For example, incrementing the day by 1
                     updateTaskInDatabase(context, taskModel)
                     val notificationId = taskModel.id.hashCode()
-                    cancelNotification(context, notificationId)
+                    showNotification(context, intent)
+                    cancelNotification(context,  notificationId)
+
                }
             }
         }
@@ -135,8 +139,9 @@ companion object {
             action = ACTION_RESCHEDULE
             putExtra("idTask", idTask)
         }
+        val textTransfer = context.getString(R.string.transfer_days)
         val reschedulePendingIntent = PendingIntent.getBroadcast(context, requestCodeReschedule, rescheduleIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-        notificationBuilder.addAction(0, "Transfer to 1 day", reschedulePendingIntent)
+        notificationBuilder.addAction(0, textTransfer, reschedulePendingIntent)
         // Add action for completing
         val completeIntent = Intent(context, Notification::class.java).apply {
             action = ACTION_COMPLETE

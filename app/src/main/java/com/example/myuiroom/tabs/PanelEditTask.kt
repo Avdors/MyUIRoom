@@ -609,13 +609,12 @@ import java.util.*
         }
         R.id.ib_file ->{
             if(idTask != null) {
- //               dismiss()
+
                 val addFile = AddFile()
                 val parameters = Bundle()
                 addFile.arguments = parameters
                 parameters.putInt("idTask", idTask!!)
-//                (context as FragmentActivity).supportFragmentManager.beginTransaction()
-//                    .replace(R.id.content, addFile).commit()
+
                 addFile.show((context as FragmentActivity).supportFragmentManager, "addFile")
             }
         }

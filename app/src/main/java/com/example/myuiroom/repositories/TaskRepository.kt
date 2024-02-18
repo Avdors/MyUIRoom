@@ -62,17 +62,17 @@ class TaskRepository(private val taskDao: TaskDao) {
         var filesForTask: MutableList<FileModel>
         var uniqueFiles: MutableList<FileModel>
 
-        Log.d("SQLLog", "TaskRepository getUniqueFilesForTask $taskId")
+
         // Observe the first LiveData
         filesForTask = taskDao.getFilesByTaskId(taskId)
-        Log.d("SQLLog", "TaskRepository filesForTask $filesForTask")
+
             // Extract file paths
         val filePaths = filesForTask.map { it.filePath }
-        Log.d("SQLLog", "TaskRepository filePaths $filePaths")
+
         uniqueFiles = taskDao.getUniqueFiles(filePaths, taskId)
         //result.postValue(uniqueFiles)
         val removPaths = uniqueFiles.map { it.filePath}
-        Log.d("SQLLog", "TaskRepository uniqueFiles $uniqueFiles")
+
 
         filesForTask.forEach { file ->
             if (uniqueFiles.isNotEmpty()) {
@@ -82,20 +82,17 @@ class TaskRepository(private val taskDao: TaskDao) {
                 }
             }
         }
-
-
         return filesForTask
     }
 
     suspend fun deleteFile(fileModel: FileModel){
-        Log.d("SQLLog", "TaskRepository deleteFile $fileModel")
-        taskDao.deleteFile(fileModel)
+       taskDao.deleteFile(fileModel)
     }
 
     suspend fun getTaskCount(){
 
         val taskCount = taskDao.getTaskCount()
-        Log.d("SQLLog", "TaskRepository taskCount $taskCount")
+
 
 
     }
@@ -103,6 +100,5 @@ class TaskRepository(private val taskDao: TaskDao) {
     suspend fun getFileCount(){
 
         val fileCount = taskDao.getFileCount()
-        Log.d("SQLLog", "TaskRepository fileCount $fileCount")
         }
 }

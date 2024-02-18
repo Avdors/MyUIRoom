@@ -21,8 +21,6 @@ class FileAdapter (private var fileList: List<FileModel>, private val itemClickL
             val textViewFileName: TextView = itemView.findViewById(R.id.textViewFileName)
 
             val fileUri = Uri.fromFile(File(file.filePath))
-            Log.d("MyLog", "FileAdapter file.filePath: ${file.filePath}")
-            Log.d("MyLog", "FileAdapter file.filePath.endsWith: ${file.filePath.endsWith(".jpg", true)}")
             if (file.filePath.endsWith(".jpg", true) || file.filePath.endsWith(".png", true)) {
                 Glide.with(itemView.context).load(fileUri).into(imageViewThumbnail)
             } else if (file.filePath.endsWith(".mp4", true)) {

@@ -60,8 +60,7 @@ class AddFile : BottomSheetDialogFragment() {
             if (result.resultCode == Activity.RESULT_OK) {
                 result.data?.data?.let { uri ->
                     val filePath = getPathFromUri(uri)
-                    Log.d("MyLog", "AddFile filePath $filePath")
-                    if (filePath != null) {
+                      if (filePath != null) {
                         // Save file path to database and update UI
                         saveFileToDatabase(filePath)
                     }
@@ -73,7 +72,7 @@ class AddFile : BottomSheetDialogFragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             taskId = it.getInt(ARG_TASK_ID)
-            Log.d("MyLog", "AddFile taskId $taskId")
+
         }
 
         taskDao = Database.getInstance(requireContext()).taskDao
@@ -90,7 +89,7 @@ class AddFile : BottomSheetDialogFragment() {
                 type = "*/*"
                 addCategory(Intent.CATEGORY_OPENABLE)
             }
-            Log.d("MyLog", "AddFile onCreateView intent $intent")
+
             filePicker.launch(intent)
 
            // startActivityForResult(intent, REQUEST_CODE_PICK_FILE)
@@ -180,7 +179,7 @@ class AddFile : BottomSheetDialogFragment() {
         val fileName = originalFileName ?: uri.lastPathSegment ?: return null
 
         val destinationFile = File(context.filesDir, fileName)
-        Log.d("MyLog", "AddFile originalFileName $originalFileName, destinationFile $destinationFile context.filesDir ${context.filesDir}")
+
 
         try {
             contentResolver.openInputStream(uri)?.use { inputStream ->
@@ -189,7 +188,7 @@ class AddFile : BottomSheetDialogFragment() {
                 }
             }
         } catch (e: IOException) {
-            Log.e("AddFile", "Error copying file", e)
+
             return null
         }
 

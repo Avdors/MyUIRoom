@@ -41,14 +41,14 @@ class TaskAdapter (private val listener: Listener, private val completeTask:(Tas
     }
 
     override fun onBindViewHolder(holder: TaskHolder, position: Int) {
-      //  holder.bind(taskList[position], completeTask, editTask)
+
         val taskModel = taskList[position]
         holder.bind(taskModel, completeTask, editTask, deleteTask)
         holder.elementField.tag = position
         holder.elementField.setOnClickListener{
             editTask(taskModel) }
 
-       // holder.elementField.setOnTouchListener(this)
+
         holder.elementField.setOnLongClickListener {
             val data = ClipData.newPlainText("", "")
             val shadowBuilder = View.DragShadowBuilder(it)
@@ -126,7 +126,7 @@ class TaskAdapter (private val listener: Listener, private val completeTask:(Tas
         if (listener != null){
             return DragListener(listener)
         } else {
-            Log.e("ListAdapter", "Listener wasn't initialized!")
+
             return  null
         }
     }

@@ -30,10 +30,9 @@ class CustomTimePicker : DialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
+
         binding = FragmentCustomTimePickerBinding.inflate(inflater, container, false)
-        // return inflater.inflate(R.layout.fragment_custom_time_picker, container, false)
-        return binding.root
+         return binding.root
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -66,7 +65,6 @@ class CustomTimePicker : DialogFragment() {
             }
         return builder.create()
 
-        //return super.onCreateDialog(savedInstanceState)
     }
 
 }

@@ -130,12 +130,12 @@ import java.util.*
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        Log.d("LogPanel", "onCreateView1")
+
         binding = PanelEditTaskBinding.inflate(inflater, container, false)
-        Log.d("LogPanel", "onCreateView2")
+
         taskAction = arguments?.getString("taskAction").toString()
         nameFormParent = arguments?.getString("nameForm").toString()
-        //binding?.DateStartTask?.setText(arguments?.getString("dateStart").toString())
+
         complet = arguments?.getString("completed").toString()
         category = arguments?.getString("category").toString()
 
@@ -154,24 +154,7 @@ import java.util.*
         hourTask = hourTaskStr?.toIntOrNull() ?: 12
         minuteTask = minuteTaskStr?.toIntOrNull() ?: 0
 
-//        binding?.numberPickerDays?.setText(dayTaskStr)
-//
-//        if (complet == "true"){
-//
-//            binding?.checkBoxCompleted?.isChecked = true
-//            binding?.DateEndTask?.setText(arguments?.getString("dateEnd").toString())
-//        }
-//        else {
-//            binding?.DateEndTask?.setText(getString(R.string.in_progres))
-//            binding?.checkBoxCompleted?.isChecked = false}
-//        if(showAlertStr == "true"){
-//            binding?.checkBoxNotification?.isChecked = true
-//            val time = getTime()
-//            dateNotification(time)
-//        }else {
-//            //binding?.infoNotification?.text = ""
-//            binding?.infoNotification?.visibility = View.GONE
-//        }
+
         if(taskAction == "Edit") {
             idTask = arguments?.getString("idTask")?.toInt()
             binding?.editNameTask?.setText(arguments?.getString("nameTask").toString())
@@ -187,14 +170,12 @@ import java.util.*
                 email = savedValue
             }
         }
-        Log.d("LogPanel", "onCreateView7")
+
         val taskDao = Database.getInstance((context as FragmentActivity).application).taskDao
         taskRepository = TaskRepository(taskDao)
         taskFactory = TaskFactory(taskRepository!!)
         taskViewModel = ViewModelProvider(this, taskFactory!!).get(TaskViewModel::class.java)
-        //spinerProcessing()
 
-        Log.d("LogPanel", "onCreateView8")
         scheduleNotification = ScheduleNotification()
 
         binding?.finishEdit?.setOnClickListener(this)
@@ -211,43 +192,6 @@ import java.util.*
 
             shareText(combinedText)
         }
-//        binding?.numberPickerDays?.setOnClickListener{
-//            val dayPickerFragment = CustomTimePicker()
-//            dayPickerFragment.setTimePickerListener(this)
-//            dayPickerFragment.show(parentFragmentManager, "timePicker")
-//        }
-//        binding?.checkBoxCompleted?.setOnCheckedChangeListener{ buttonView, isChecked ->
-//          if(isChecked){
-//              binding?.DateEndTask?.setText(currentDate.toString())
-//          }
-//
-//          else {
-//              binding?.DateEndTask?.setText(getString(R.string.enter_end_start))}
-//        }
-
-//        binding?.DateEndTask?.setOnClickListener{
-//            showDatePickerDialog("End")
-//        }
-
-//        binding?.DateStartTask?.setOnClickListener{
-//            showDatePickerDialog("Start")
-//        }
-
-        //binding?.greateNotif?.setOnClickListener(this)
-
-//        binding?.checkBoxNotification?.setOnCheckedChangeListener{ buttonView, isChecked ->
-//          if(isChecked){
-//              showAlertStr = "true"
-//          }
-//            else {
-//              showAlertStr = "false"
-//
-//          }
-//           if (areNotificationsEnabled(requireContext()) != true){
-//               showNotificationSettingsDialog(requireContext())
-//           }
-//
-//        }
 
         //speech
         editText = binding?.editInfoTask!!
@@ -301,20 +245,19 @@ import java.util.*
             toggleNumberDaysVisibility()
         }
 
-        Log.d("LogPanel", "onCreateView10")
         return binding?.root
     }
     //ViewStub реализация
         private fun toggleNumberDaysVisibility() {
-    Log.d("PanelEditTask", "toggleNumberDaysVisibility called")
+
     if (morePropertiesView == null) {
-        Log.d("PanelEditTask", "Inflating ViewStub")
+
         inflateMoreProperties()
     } else {
         // Toggle visibility
         val newVisibility = if (morePropertiesView?.visibility == View.VISIBLE) View.GONE else View.VISIBLE
         morePropertiesView?.visibility = newVisibility
-        Log.d("PanelEditTask", "Toggling visibility to: $newVisibility")
+
     }
         }
 
@@ -365,14 +308,12 @@ import java.util.*
             morePropertiesView?.findViewById<EditText>(R.id.numberPickerDays)?.let { editText ->
                 // Log the current text value for debugging
                 val currentText = editText.text.toString()
-                Log.d("LogC", "Initial EditText Value: $currentText")
+
 
                 editText.setOnClickListener {
                     // Here, directly use 'editText' reference to get the current value
                     val currentDayValueStr = editText.text.toString()
-                    Log.d("LogC", "Clicked EditText Value: $currentDayValueStr")
                     val currentDayValue = currentDayValueStr.toIntOrNull() ?: 0 // Default to 0 if null or not a number
-                    Log.d("LogC", "Parsed CurrentDayValue: $currentDayValue")
 
                     // Now, create the fragment and pass the currentDayValue
                     val dayPickerFragment = CustomTimePicker().apply {
@@ -824,7 +765,6 @@ import java.util.*
                     binding?.editNameTask?.text.toString()
                 )
             } else {
-                Log.d("LogPanel", "дата уведомления старая $time")
             }
         }
     }
@@ -904,7 +844,7 @@ import java.util.*
             val parsedDate = LocalDate.parse(startDateText, dateFormatter)
             calendar.set(parsedDate.year, parsedDate.monthValue - 1, parsedDate.dayOfMonth)
         } catch (e: DateTimeParseException) {
-            Log.e("PanelEditTask", "Error parsing start date: $startDateText", e)
+
             // Handle the error, perhaps by using the current date or notifying the user
         }
         calendar.add(Calendar.DAY_OF_MONTH, dayTask ?: 0)

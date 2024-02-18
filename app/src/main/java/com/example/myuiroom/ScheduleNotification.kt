@@ -28,8 +28,7 @@ class ScheduleNotification {
             .toFormatter()
     }
     fun createNotification(context: Context, task: TaskModel, change:Int = 0) {
-        Log.d("LogNot", "createNotification task ${task.id} taskminute ${task.minute}")
-        Log.d("LogNot", "createNotification context $context ")
+
         var dayTask = task.day.toString().toIntOrNull() ?: 0
         val hourTask = task.hourOfDay.toString().toIntOrNull() ?: 12
         var minuteTask = task.minute.toString().toIntOrNull() ?: 0
@@ -56,7 +55,7 @@ class ScheduleNotification {
         )
         val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val time = getTime(task.dateStart, dayTask, hourTask, minuteTask)
-        Log.d("LogNot", "createNotification time $time")
+
 
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
@@ -67,8 +66,7 @@ class ScheduleNotification {
     }
     fun createNotifForTime(context: Context, taskId: Int, time: Long, taskName: String) {
 
-        Log.d("LogNot", "createNotifForTime task ${taskId} taskminute ${time}")
-        Log.d("LogNot", "createNotifForTime context $context ")
+
 
         val intent = Intent(context, Notification::class.java)
         intent.setAction("com.example.myuiroom.MY_ACTION")

@@ -92,15 +92,6 @@ class TaskAll : Fragment(), View.OnClickListener, Listener {
         parameters.putString("taskAction", "Edit")
         panelEditTask.arguments = parameters
 
-        Log.d("LogTall", "idTask ${taskModel.id.toString()}")
-        Log.d("LogTall", "nameTask ${taskModel.name.toString()}")
-        Log.d("LogTall", "email ${taskModel.email.toString()}")
-        Log.d("LogTall", "typeTask ${taskModel.type.toString()}")
-        Log.d("LogTall", "infoTask ${taskModel.info.toString()}")
-        Log.d("LogTall", "dateStart ${taskModel.dateStart.toString()}")
-        Log.d("LogTall", "dateEnd ${taskModel.dateEnd.toString()}")
-        Log.d("LogTall", "completed ${taskModel.completed.toString()}")
-        Log.d("LogTall", "category ${taskModel.category.toString()}")
         panelEditTask.show((context as FragmentActivity).supportFragmentManager, "editTask")
     }
 

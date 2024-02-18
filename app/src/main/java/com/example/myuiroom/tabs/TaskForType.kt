@@ -70,17 +70,13 @@ class TaskForType : Fragment(), View.OnClickListener, Listener, PanelEditTaskDis
         binding?.buttonAddTask?.setOnClickListener(this)
         //если удаляем задачу из Панели редактирования
         val taskIdDelete = arguments?.getString("idTaskDelete")
-        Log.d("SQLLog", "TaskForType taskIdDelete $taskIdDelete")
+
         if (taskIdDelete != null) {
         //deleteTaskById(taskIdDelete)
 
         }
         loadTask()
 
-//        YoYo.with(Techniques.RubberBand)
-//            .duration(700)
-//            .repeat(5)
-//            .playOn(binding?.buttonAddTask)
         binding?.tvImportant?.visibility = View.VISIBLE
         binding?.tvNotImportantAndUrgent?.visibility = View.VISIBLE
         binding?.tvUrgent?.visibility = View.VISIBLE
@@ -138,13 +134,13 @@ class TaskForType : Fragment(), View.OnClickListener, Listener, PanelEditTaskDis
                 // Deselect all buttons
                 buttons.forEach {
                     if(it?.isSelected == true){
-                        Log.d("MyLogBot", "it?.isSelected ${it.id}")
+
                         buttonSelected = it
                     }
                     it?.isSelected = false }
 
                 // Select the clicked button
-                Log.d("MyLogBot", "button.isSelected ${button.isSelected}")
+
                 if(button == buttonSelected){
                     button.isSelected = false
                     handleButtonClick(button.id)
@@ -281,8 +277,7 @@ class TaskForType : Fragment(), View.OnClickListener, Listener, PanelEditTaskDis
 
 
             val filteredList = taskViewModel?.tasks?.value?.filter { task ->
-                Log.d("MyLogBot", "categoryStr ${categoryStr}")
-                Log.d("MyLogBot", "task.category ${task.category}")
+
                 if(categoryStr != null){
 
                     task.type == type && task.email == email && task.completed != "true"&& task.category == categoryStr
@@ -401,22 +396,22 @@ class TaskForType : Fragment(), View.OnClickListener, Listener, PanelEditTaskDis
 //изменения по новому адаптеру перетаскивания
     override fun setEmptyListImportant(visibility: Boolean) {
             binding?.tvImportant?.visibility = if (visibility) View.VISIBLE else View.GONE
-            Log.d("MyLog", "setEmptyListImportant")
+
 
     }
     override fun setEmptyListNotImportant(visibility: Boolean) {
         binding?.tvNotImportantAndUrgent?.visibility = if (visibility) View.VISIBLE else View.GONE
-            Log.d("MyLog", "setEmptyListNotImportant")
+
 
     }
     override fun setEmptyListUrgent(visibility: Boolean) {
         binding?.tvUrgent?.visibility = if (visibility) View.VISIBLE else View.GONE
-            Log.d("MyLog", "setEmptyListUrgent")
+
 
     }
     override fun setEmptyListImportantUrgent(visibility: Boolean) {
         binding?.tvImportantAndUrgent?.visibility = if (visibility) View.VISIBLE else View.GONE
-            Log.d("MyLog", "setEmptyListImportantUrgent")
+
 
     }
 
@@ -427,11 +422,11 @@ class TaskForType : Fragment(), View.OnClickListener, Listener, PanelEditTaskDis
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun findTaskById(taskId: String) {
-        Log.d("MyLog", "Id Task $taskId")
+
         val taskIdInt = taskId.toIntOrNull() ?: return
         taskViewModel?.getTaskById(taskIdInt)?.observe(viewLifecycleOwner, Observer { taskModel ->
             // Assuming taskModel is the TaskModel you want to edit
-            Log.d("MyLog", "Task model $taskModel")
+
             taskModel?.let { editTask(it)
           }
         })
@@ -439,7 +434,7 @@ class TaskForType : Fragment(), View.OnClickListener, Listener, PanelEditTaskDis
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun deleteTaskById(taskId: String) {
-        Log.d("SQLLog", "Id Task $taskId")
+
         val taskIdInt = taskId.toIntOrNull() ?: return
         taskViewModel?.deleteTaskById(taskIdInt)
     }

@@ -48,7 +48,7 @@ class TaskViewModel(private val taskRepository: TaskRepository): ViewModel() {
     }
 
     private fun insertTask(taskModel: TaskModel, onTaskInserted: (Long) -> Unit){
-        Log.d("MyLog", "TaskViewModel test startInsertModel, day ${taskModel.day}, hourOfDay ${taskModel.hourOfDay}, minute ${taskModel.minute}, show_alert ${taskModel.show_alert}")
+
         viewModelScope.launch{
             val id = taskRepository.insertTask(taskModel)
             onTaskInserted(id)
@@ -56,29 +56,28 @@ class TaskViewModel(private val taskRepository: TaskRepository): ViewModel() {
     }
 
     fun loadUniqueFiles(taskId: Int, taskModel: TaskModel){
-        Log.d("SQLLog", "TaskViewModel loadUniqueFiles $taskId")
-        //var returnValue = false
+
+
         viewModelScope.launch {
 
         val uniqueFiles = taskRepository?.getUniqueFilesForTask(taskId, taskModel)
-            Log.d("SQLLog", "TaskViewModel uniqueFiles $uniqueFiles")
+
             deleteFiles(uniqueFiles!!, taskModel)
-           // deleteFileRecords(uniqueFiles!!, taskModel)
+
 
         }
 
-        //return returnValue
 
     }
     private fun deleteFiles(files: List<FileModel>, taskModel: TaskModel) {
         var returnValue = false
         files.forEach { file ->
-            Log.d("SQLLog", "TaskViewModel deleteFiles file.filePath ${file.filePath}")
+
             val fileToDelete = File(file.filePath)
-            Log.d("SQLLog", "fileToDelete.exists() ${fileToDelete.exists()}")
+
             if (fileToDelete.exists()) {
                 returnValue = fileToDelete.delete()
-                Log.d("SQLLog", "TaskViewModel deleteFiles fileToDelete.delete() ${returnValue}")
+
             }
         }
         deleteFileRecords(files, taskModel)
@@ -90,7 +89,7 @@ class TaskViewModel(private val taskRepository: TaskRepository): ViewModel() {
             files.forEach { file ->
                 taskRepository?.deleteFile(file)
             }
-           // taskRepository.deleteTask(taskModel)
+
         }
     }
 

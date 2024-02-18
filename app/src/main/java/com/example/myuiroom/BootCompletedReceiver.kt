@@ -61,7 +61,7 @@ class BootCompletedReceiver : BroadcastReceiver()  {
                     val currentTime = System.currentTimeMillis()
                     if(time > currentTime) {
                         scheduleNotification?.createNotification(context, task,)
-                    }else{Log.d("LogReciev", "дата уведомления старая $time")}
+                    }else{Log.d("MyLog", "дата уведомления старая $time")}
                 }
             }
         }

@@ -34,7 +34,7 @@ companion object {
 }
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onReceive(context: Context, intent: Intent) {
-        Log.d("NotificationDebug", "Action received: ${intent.action}, Task ID: ${intent.getStringExtra("idTask")}")
+
         scheduleNotification = ScheduleNotification()
         when (intent.action) {
             ACTION_RESCHEDULE -> handleReschedule(context, intent)
@@ -46,7 +46,7 @@ companion object {
     private fun handleReschedule(context: Context, intent: Intent) {
         // Extract task ID from intent and reschedule the task
         val taskId = intent.getStringExtra("idTask")?.toIntOrNull()
-        Log.d("NotificationDebug", "Handling Reschedule for Task ID: $taskId")
+
         taskId?.let {
             CoroutineScope(Dispatchers.IO).launch {
                 val task = getTaskFromDatabase(context, taskId)
@@ -79,7 +79,7 @@ companion object {
         // Extract task ID from intent and reschedule the task
 
         val taskId = intent.getStringExtra("idTask")?.toIntOrNull()
-        Log.d("NotificationDebug", "Handling Complete for Task ID: $taskId")
+
         taskId?.let {
             CoroutineScope(Dispatchers.IO).launch {
                 val task = getTaskFromDatabase(context, taskId)
@@ -94,10 +94,10 @@ companion object {
     }
 
     private fun updateTaskInDatabase(context: Context, taskModel: TaskModel) {
-        Log.d("LogNot", "Notification.kt updateTaskInDatabase start")
+
         val taskDao = Database.getInstance(context).taskDao
         val taskRepository = TaskRepository(taskDao)
-        Log.d("LogNot", "Notification.kt updateTaskInDatabase taskModel minute ${taskModel.minute}")
+
         CoroutineScope(Dispatchers.IO).launch {
             taskRepository.updateTask(taskModel)
         }
@@ -107,7 +107,7 @@ companion object {
         val idTask = intent.getStringExtra("idTask")
         val notificationId = idTask?.hashCode() ?: 0
         notificationIdTest = idTask?.hashCode() ?: 0
-        Log.d("NotificationDebug", "Showing notification with ID: $notificationId for Task ID: $idTask")
+
         val requestCodeReschedule = idTask.hashCode() // or some unique way to derive from taskId
         val requestCodeComplete = (idTask.hashCode() + 1)
         // Create the intent for opening the app (existing implementation)
@@ -151,7 +151,7 @@ companion object {
     }
     private fun cancelNotification(context: Context, taskId: Int) {
         val notificationId = taskId.hashCode()
-        Log.d("NotificationDebug", "Canceling notification with ID: $notificationId for Task ID: $taskId")
+
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancel(notificationIdTest!!)
     }

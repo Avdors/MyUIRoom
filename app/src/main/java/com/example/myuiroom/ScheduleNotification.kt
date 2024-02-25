@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import com.example.myuiroom.Notification.Companion.ACTION_CLEAR
 import com.example.myuiroom.models.TaskModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -95,6 +96,38 @@ class ScheduleNotification {
             time,
             pendingIntent
         )
+
+    }
+
+    fun clearNotificationById(context: Context, taskId: Int) {
+
+
+        Log.d("MyLog", "clearNotificationById")
+        val intent = Intent(context, Notification::class.java)
+        intent.setAction(ACTION_CLEAR)
+       // val title = context.getString(R.string.close_task)
+       //  val message = taskName.toString()
+       // intent.putExtra(titleExtra, title)
+       // intent.putExtra(messageExtra, message)
+        intent. putExtra("idTask", taskId.toString())
+
+        val notificationId = taskId.hashCode()
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            notificationId,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        // val time = getTime(task.dateStart, dayTask, hourTask, minuteTask)
+
+//        alarmManager.setExactAndAllowWhileIdle(
+//            AlarmManager.RTC_WAKEUP,
+//            time,
+//            pendingIntent
+//        )
+        alarmManager.cancel(pendingIntent)
 
     }
     private fun getTime(startDateText : String, dayTask: Int, hourTask: Int, minuteTask : Int): Long {

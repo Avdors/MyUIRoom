@@ -355,6 +355,7 @@ import java.util.*
                 } else {
                     showAlertStr = "false"
                     morePropertiesView?.findViewById<AppCompatTextView>(R.id.infoNotification)?.visibility = View.GONE
+                    cleareNotification()
                 }
             }
         }
@@ -742,6 +743,26 @@ import java.util.*
                 return appOps.unsafeCheckOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, uid, pkg) == AppOpsManager.MODE_ALLOWED
             }
         }
+        //удаляю уведомление если снят флаг Show alert или задача удалена
+        private fun cleareNotification(){
+
+              //  val currentTime = System.currentTimeMillis()
+
+//                    scheduleNotification?.clearNotificationById(
+//                        requireContext(),
+//                        idTask!!
+//                    )
+
+            idTask?.let { taskId ->
+                Intent(requireContext(), Notification::class.java).also { intent ->
+                    intent.action = Notification.ACTION_CLEAR
+                    intent.putExtra("idTask", taskId.toString())
+                    requireContext().sendBroadcast(intent)
+                }
+            }
+
+        }
+
     private fun grateNotification(){
       //если не открывались доп реквизиты, то мы в любом случае не создаем повторное уведомление
         if (morePropertiesView != null) {

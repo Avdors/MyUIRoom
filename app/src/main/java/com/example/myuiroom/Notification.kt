@@ -31,15 +31,56 @@ private var taskRepository: TaskRepository? = null
 companion object {
     const val ACTION_RESCHEDULE = "com.example.myuiroom.ACTION_RESCHEDULE"
     const val ACTION_COMPLETE = "com.example.myuiroom.ACTION_COMPLETE"
+    const val ACTION_CLEAR = "com.example.myuiroom.ACTION_CLEAR"
 }
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onReceive(context: Context, intent: Intent) {
 
         scheduleNotification = ScheduleNotification()
+        Log.d("MyLog", "class Notification")
         when (intent.action) {
+
             ACTION_RESCHEDULE -> handleReschedule(context, intent)
             ACTION_COMPLETE -> handleComplete(context, intent)
+            ACTION_CLEAR -> clearNotification(context, intent)
             else -> showNotification(context, intent)
+        }
+    }
+
+//    private fun clearNotification(context: Context, intent: Intent) {
+//
+//        val taskId = intent.getStringExtra("idTask")?.toIntOrNull()
+//        Log.d("MyLog", "clearNotification taskId $taskId")
+//        taskId?.let {
+//            CoroutineScope(Dispatchers.IO).launch {
+//                val task = getTaskFromDatabase(context, taskId)
+//                task?.let { taskModel ->
+//                    // Update taskModel as required for rescheduling
+//                    taskModel.day += 1 // For example, incrementing the day by 1
+//                    val change = taskModel.day
+//
+//                    taskModel.minute = change
+//                    //updateTaskInDatabase(context, taskModel)
+//                    //scheduleNotification.createNotification(context, taskModel, change)
+//
+//                    val notificationId = taskModel.id.hashCode()
+//
+//
+//                    // нужно запустить еще раз шоу, иначе не закрыть уведомление
+////                    showNotification(context, intent)
+//                   cancelNotification(context,  notificationId)
+////                    scheduleNotification.createNotification(context, taskModel, change)
+//                }
+//            }
+//        }
+//    }
+
+
+    private fun clearNotification(context: Context, intent: Intent) {
+        val taskId = intent.getStringExtra("idTask")?.toIntOrNull()
+        taskId?.let {
+            val notificationId = it.hashCode() // Ensure this matches how you compute notification IDs elsewhere
+            cancelNotification(context, notificationId)
         }
     }
     @RequiresApi(Build.VERSION_CODES.O)
@@ -60,6 +101,7 @@ companion object {
                     //scheduleNotification.createNotification(context, taskModel, change)
 
                     val notificationId = taskModel.id.hashCode()
+                    // нужно запустить еще раз шоу, иначе не закрыть уведомление
                     showNotification(context, intent)
                     cancelNotification(context,  notificationId)
                     scheduleNotification.createNotification(context, taskModel, change)

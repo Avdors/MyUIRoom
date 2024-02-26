@@ -748,18 +748,18 @@ import java.util.*
 
               //  val currentTime = System.currentTimeMillis()
 
-//                    scheduleNotification?.clearNotificationById(
-//                        requireContext(),
-//                        idTask!!
-//                    )
+                    scheduleNotification?.clearNotificationById(
+                        requireContext(),
+                        idTask!!
+                    )
 
-            idTask?.let { taskId ->
-                Intent(requireContext(), Notification::class.java).also { intent ->
-                    intent.action = Notification.ACTION_CLEAR
-                    intent.putExtra("idTask", taskId.toString())
-                    requireContext().sendBroadcast(intent)
-                }
-            }
+//            idTask?.let { taskId ->
+//                Intent(requireContext(), Notification::class.java).also { intent ->
+//                    intent.action = Notification.ACTION_CLEAR
+//                    intent.putExtra("idTask", taskId.toString())
+//                    requireContext().sendBroadcast(intent)
+//                }
+//            }
 
         }
 

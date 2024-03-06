@@ -14,6 +14,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myuiroom.R
+import com.example.myuiroom.ScheduleNotification
 import com.example.myuiroom.adapters.TaskAdapter
 import com.example.myuiroom.data.Database
 import com.example.myuiroom.databinding.TaskAllBinding
@@ -32,6 +33,12 @@ class TaskAll : Fragment(), View.OnClickListener, Listener {
     private var taskViewModel: TaskViewModel? = null
     private var taskFactory: TaskFactory? = null
     private var taskAdapter: TaskAdapter? = null
+    private var scheduleNotification: ScheduleNotification? = null
+    private val currentDate = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        LocalDate.now()
+    } else {
+        TODO("VERSION.SDK_INT < O")
+    }
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -72,7 +79,17 @@ class TaskAll : Fragment(), View.OnClickListener, Listener {
     }
 
     private fun completeTask(taskModel: TaskModel) {
-
+        val dateString = currentDate.toString()
+        taskViewModel?.startUpdateTask(
+            taskModel.id,
+            taskModel.name,
+            taskModel.email,
+            taskModel.type,
+            taskModel.info,
+            taskModel.dateStart,
+            dateString,
+            "true",0,0,0,"", taskModel.category
+        )
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -97,10 +114,15 @@ class TaskAll : Fragment(), View.OnClickListener, Listener {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun deleteTask(taskModel: TaskModel) {
-
+        scheduleNotification?.clearNotificationById(
+            requireContext(),
+            taskModel.id
+        )
         taskViewModel?.deleteTask(taskModel)?.let {
+
             // Refresh the list after the task is deleted.
             // Since deleteTask is a suspend function, we don't need to observe it
+            initRecyclerProducts()
             loadTask()
         }
     }

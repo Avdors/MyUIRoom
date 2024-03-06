@@ -295,10 +295,6 @@ class TaskForType : Fragment(), View.OnClickListener, Listener, PanelEditTaskDis
             }
 
 
-//        val filteredList = taskViewModel?.tasks?.value?.filter { task ->
-//            task.type == type && task.email == email && task.completed != "true"
-//        }
-
         // для перетаскивания здесь определим какой ресайклер использовать
         val recyclerView = when (type) {
             "important" -> binding?.important

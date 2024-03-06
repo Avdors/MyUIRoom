@@ -745,22 +745,11 @@ import java.util.*
         }
         //удаляю уведомление если снят флаг Show alert или задача удалена
         private fun cleareNotification(){
-
               //  val currentTime = System.currentTimeMillis()
-
                     scheduleNotification?.clearNotificationById(
                         requireContext(),
                         idTask!!
                     )
-
-//            idTask?.let { taskId ->
-//                Intent(requireContext(), Notification::class.java).also { intent ->
-//                    intent.action = Notification.ACTION_CLEAR
-//                    intent.putExtra("idTask", taskId.toString())
-//                    requireContext().sendBroadcast(intent)
-//                }
-//            }
-
         }
 
     private fun grateNotification(){

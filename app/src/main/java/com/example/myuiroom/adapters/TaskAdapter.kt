@@ -8,12 +8,14 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myuiroom.R
 import com.example.myuiroom.databinding.TaskItemBinding
 import com.example.myuiroom.models.TaskModel
 import com.example.myuiroom.tabs.move.DragListener
 import com.example.myuiroom.tabs.move.Listener
+import kotlinx.coroutines.withContext
 
 class TaskAdapter (private val listener: Listener, private val completeTask:(TaskModel)->Unit,
                    private val editTask:(TaskModel)->Unit, private val deleteTask: (TaskModel) -> Unit, private val isDeleteVisible: Boolean) : RecyclerView.Adapter<TaskAdapter.TaskHolder>(), View.OnTouchListener {
@@ -57,11 +59,8 @@ class TaskAdapter (private val listener: Listener, private val completeTask:(Tas
             } else {
                 it.startDrag(data, shadowBuilder, it, 0)
             }
-
-
             true
         }
-
         holder.elementField.setOnDragListener(DragListener(listener))
 
     }
@@ -84,10 +83,11 @@ class TaskAdapter (private val listener: Listener, private val completeTask:(Tas
                 completeTask(taskModel) }, )
             binding.deleteTask.setOnClickListener({deleteTask(taskModel)})
             if(taskModel.completed == "true"){
-                binding.completeTask.setImageResource(R.drawable.done_all)
+                binding.completeTask.setImageResource(R.drawable.done_blue)
+                val color = ContextCompat.getColor(binding.root.context, R.color.light_blue)
+                binding.nameTask.setTextColor(color)
             }
-//            binding.editTask.setOnClickListener({
-//                editTask(taskModel) })
+
             when (taskModel.category) {
                 "family" -> binding.ibCategory.setImageResource(R.drawable.happy_house__16)
                 "job" -> binding.ibCategory.setImageResource(R.drawable.job_seeker_16)
